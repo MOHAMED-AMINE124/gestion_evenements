@@ -1,0 +1,343 @@
+{% extends 'base.html' %}
+{% block title %}Accueil - École Events{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container" style="position:relative; z-index:1;">
+        <div style="font-size:4rem; margin-bottom:20px;">🎓</div>
+        <h1>Bienvenue, {{ session.user_name }}!</h1>
+        <p class="mt-3 mb-4" style="color:rgba(255,255,255,0.6); font-size:1.1rem;">
+            Gérez vos événements scolaires facilement et efficacement
+        </p>
+        <div style="display:flex; gap:15px; justify-content:center; flex-wrap:wrap;">
+            <a href="{{ url_for('events.list_events') }}" class="btn-gold" 
+               style="width:auto; padding:12px 30px; text-decoration:none; display:inline-block;">
+                Explorer les événements
+            </a>
+            <a href="{{ url_for('events.create_event') }}" 
+               style="background:rgba(255,255,255,0.05); color:white; border:1px solid rgba(255,255,255,0.15); 
+                      padding:12px 30px; border-radius:12px; text-decoration:none; display:inline-block; 
+                      font-weight:500; transition:all 0.3s;"
+               onmouseover="this.style.background='rgba(255,255,255,0.1)'" 
+               onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+                Créer un événement
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Statistiques -->
+<div class="container" style="margin-top:-40px; position:relative; z-index:2;">
+    <div class="row g-4">
+        <div class="col-md-3 col-6">
+            <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:16px; padding:25px 15px; text-align:center;">
+                <div style="font-size:2rem; margin-bottom:8px;">📊</div>
+                <div style="font-size:1.8rem; font-weight:700; color:#d4af37;">{{ events_count }}</div>
+                <div style="color:rgba(255,255,255,0.5); font-size:0.85rem;">Événements actifs</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:16px; padding:25px 15px; text-align:center;">
+                <div style="font-size:2rem; margin-bottom:8px;">🎫</div>
+                <div style="font-size:1.8rem; font-weight:700; color:#d4af37;">{{ tickets_count if tickets_count is defined else '0' }}</div>
+                <div style="color:rgba(255,255,255,0.5); font-size:0.85rem;">Tickets réservés</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:16px; padding:25px 15px; text-align:center;">
+                <div style="font-size:2rem; margin-bottom:8px;">👥</div>
+                <div style="font-size:1.8rem; font-weight:700; color:#d4af37;">{{ users_count if users_count is defined else '0' }}</div>
+                <div style="color:rgba(255,255,255,0.5); font-size:0.85rem;">Utilisateurs</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:16px; padding:25px 15px; text-align:center;">
+                <div style="font-size:2rem; margin-bottom:8px;">💰</div>
+                <div style="font-size:1.8rem; font-weight:700; color:#d4af37;">{{ revenue if revenue is defined else '0' }} MAD</div>
+                <div style="color:rgba(255,255,255,0.5); font-size:0.85rem;">Revenus totaux</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Access Cards -->
+<div class="container py-5">
+    <h4 style="color:white; font-weight:700; margin-bottom:30px; text-align:center; font-size:1.8rem;">
+        Navigation rapide
+    </h4>
+    <div class="row g-4">
+        
+        <!-- Card 1: Événements -->
+        <div class="col-lg-3 col-md-6">
+            <a href="{{ url_for('events.list_events') }}" style="text-decoration:none; display:block;">
+                <div class="dark-card" style="padding:35px 20px; text-align:center; height:100%;">
+                    <div style="font-size:3.5rem; margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:10px;">
+                        <span style="background:linear-gradient(135deg,#d4af37,#9a7b10); width:70px; height:70px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; color:#0a0a0a;">
+                            📋
+                        </span>
+                    </div>
+                    <h5 style="color:white; font-weight:600; margin-bottom:10px;">Événements</h5>
+                    <p style="color:rgba(255,255,255,0.45); font-size:0.9rem; margin:0;">
+                        Découvrez tous les événements disponibles et réservez vos places
+                    </p>
+                    <div style="margin-top:15px; color:#d4af37; font-size:0.85rem; font-weight:500;">
+                        Voir plus →
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Card 2: Créer un événement -->
+        <div class="col-lg-3 col-md-6">
+            <a href="{{ url_for('events.create_event') }}" style="text-decoration:none; display:block;">
+                <div class="dark-card" style="padding:35px 20px; text-align:center; height:100%;">
+                    <div style="font-size:3.5rem; margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:10px;">
+                        <span style="background:linear-gradient(135deg,#d4af37,#9a7b10); width:70px; height:70px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; color:#0a0a0a;">
+                            ✨
+                        </span>
+                    </div>
+                    <h5 style="color:white; font-weight:600; margin-bottom:10px;">Créer un événement</h5>
+                    <p style="color:rgba(255,255,255,0.45); font-size:0.9rem; margin:0;">
+                        Organisez et publiez votre prochain événement en quelques clics
+                    </p>
+                    <div style="margin-top:15px; color:#d4af37; font-size:0.85rem; font-weight:500;">
+                        Commencer →
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Card 3: Mes Tickets -->
+        <div class="col-lg-3 col-md-6">
+            <a href="{{ url_for('tickets.my_tickets') }}" style="text-decoration:none; display:block;">
+                <div class="dark-card" style="padding:35px 20px; text-align:center; height:100%;">
+                    <div style="font-size:3.5rem; margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:10px;">
+                        <span style="background:linear-gradient(135deg,#d4af37,#9a7b10); width:70px; height:70px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; color:#0a0a0a;">
+                            🎟️
+                        </span>
+                    </div>
+                    <h5 style="color:white; font-weight:600; margin-bottom:10px;">Mes Tickets</h5>
+                    <p style="color:rgba(255,255,255,0.45); font-size:0.9rem; margin:0;">
+                        Consultez vos réservations, QR codes et billets numériques
+                    </p>
+                    <div style="margin-top:15px; color:#d4af37; font-size:0.85rem; font-weight:500;">
+                        Voir mes tickets →
+                    </div>
+                    {% if session.notif_count and session.notif_count > 0 %}
+                    <div style="background:#d4af37; color:#0a0a0a; border-radius:20px; padding:3px 12px; font-size:0.7rem; font-weight:700; display:inline-block; margin-top:10px;">
+                        {{ session.notif_count }} nouveau(x)
+                    </div>
+                    {% endif %}
+                </div>
+            </a>
+        </div>
+
+        <!-- Card 4: Notifications -->
+        <div class="col-lg-3 col-md-6">
+            <a href="{{ url_for('notifications.list_notifications') }}" style="text-decoration:none; display:block;">
+                <div class="dark-card" style="padding:35px 20px; text-align:center; height:100%;">
+                    <div style="font-size:3.5rem; margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:10px;">
+                        <span style="background:linear-gradient(135deg,#d4af37,#9a7b10); width:70px; height:70px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; color:#0a0a0a;">
+                            🔔
+                        </span>
+                    </div>
+                    <h5 style="color:white; font-weight:600; margin-bottom:10px;">Notifications</h5>
+                    <p style="color:rgba(255,255,255,0.45); font-size:0.9rem; margin:0;">
+                        Restez informé des changements et mises à jour importantes
+                    </p>
+                    <div style="margin-top:15px; color:#d4af37; font-size:0.85rem; font-weight:500;">
+                        Voir les notifications →
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<!-- Derniers événements -->
+<div class="container py-4">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
+        <h4 style="color:white; font-weight:700; margin:0;">🔥 Événements récents</h4>
+        <a href="{{ url_for('events.list_events') }}" style="color:#d4af37; text-decoration:none; font-weight:500;">
+            Voir tout →
+        </a>
+    </div>
+    
+    <div class="row g-4">
+        {% if recent_events %}
+            {% for event in recent_events %}
+            <div class="col-md-3 col-6">
+                <div style="background:#161616; border:1px solid rgba(212,175,55,0.15); border-radius:16px; overflow:hidden; transition:all 0.3s;"
+                     onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='rgba(212,175,55,0.4)'"
+                     onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(212,175,55,0.15)'">
+                    
+                    <div style="height:120px; background:linear-gradient(135deg, #1a1a1a, #2a2a2a); display:flex; align-items:center; justify-content:center; font-size:3rem; position:relative;">
+                        {% if event.image and event.image != 'default_event.jpg' %}
+                        <img src="{{ url_for('static', filename='uploads/' + event.image) }}"
+                             style="width:100%; height:100%; object-fit:cover;">
+                        {% else %}
+                        <span>🎯</span>
+                        {% endif %}
+                        <div style="position:absolute; top:8px; right:8px; background:linear-gradient(135deg,#d4af37,#9a7b10); color:#0a0a0a; padding:2px 10px; border-radius:12px; font-size:0.65rem; font-weight:700;">
+                            {% if event.price == 0 %}Gratuit{% else %}{{ event.price }} MAD{% endif %}
+                        </div>
+                        <!-- Status Badge -->
+                        <div style="position:absolute; bottom:8px; left:8px;">
+                            {% if event.status == 'active' %}
+                                {% if event.event_date < now %}
+                                <span style="background:rgba(46,213,115,0.15); color:#2ed573; padding:2px 8px; border-radius:12px; font-size:0.55rem; font-weight:600; border:1px solid rgba(46,213,115,0.3);">
+                                    🟢 En cours
+                                </span>
+                                {% else %}
+                                <span style="background:rgba(212,175,55,0.15); color:#d4af37; padding:2px 8px; border-radius:12px; font-size:0.55rem; font-weight:600; border:1px solid rgba(212,175,55,0.3);">
+                                    🟡 À venir
+                                </span>
+                                {% endif %}
+                            {% elif event.status == 'cancelled' %}
+                            <span style="background:rgba(220,53,69,0.15); color:#ff6b6b; padding:2px 8px; border-radius:12px; font-size:0.55rem; font-weight:600; border:1px solid rgba(220,53,69,0.3);">
+                                🔴 Annulé
+                            </span>
+                            {% else %}
+                            <span style="background:rgba(255,255,255,0.05); color:rgba(255,255,255,0.4); padding:2px 8px; border-radius:12px; font-size:0.55rem; font-weight:600; border:1px solid rgba(255,255,255,0.1);">
+                                ⚪ Terminé
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div style="padding:15px;">
+                        <div style="color:white; font-weight:600; font-size:0.9rem; margin-bottom:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                            {{ event.title }}
+                        </div>
+                        <div style="color:rgba(255,255,255,0.4); font-size:0.75rem;">
+                            📅 {{ event.event_date.strftime('%d/%m/%Y') }}
+                        </div>
+                        <div style="color:rgba(255,255,255,0.3); font-size:0.7rem; margin-top:3px;">
+                            📍 {{ event.location }}
+                        </div>
+                        <a href="{{ url_for('events.event_detail', event_id=event.id) }}"
+                           style="display:block; text-align:center; margin-top:10px; background:rgba(212,175,55,0.15); color:#d4af37; padding:5px; border-radius:8px; text-decoration:none; font-size:0.8rem; border:1px solid rgba(212,175,55,0.2); transition:all 0.3s;"
+                           onmouseover="this.style.background='rgba(212,175,55,0.25)'"
+                           onmouseout="this.style.background='rgba(212,175,55,0.15)'">
+                            Réserver →
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div style="text-align:center; padding:40px; background:#161616; border-radius:16px; border:1px solid rgba(212,175,55,0.1);">
+                    <span style="font-size:3rem;">📭</span>
+                    <p style="color:rgba(255,255,255,0.4); margin-top:10px;">Aucun événement récent pour le moment</p>
+                    <a href="{{ url_for('events.create_event') }}" style="color:#d4af37; text-decoration:none; font-weight:500;">
+                        Créer le premier événement →
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ============================================ -->
+<!-- 🔴 Flux d'activité (Nouveau) -->
+<!-- ============================================ -->
+<div class="container py-4">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
+        <h4 style="color:white; font-weight:700; margin:0;">📊 Activité récente</h4>
+        <span style="color:rgba(255,255,255,0.3); font-size:0.8rem;">En temps réel</span>
+    </div>
+    
+    <div style="background:#161616; border:1px solid rgba(212,175,55,0.1); border-radius:16px; padding:25px;">
+        <div style="display:flex; flex-direction:column; gap:12px;">
+            {% if recent_activity %}
+                {% for activity in recent_activity %}
+                <div style="display:flex; align-items:center; gap:15px; padding:10px 15px; background:rgba(255,255,255,0.02); border-radius:12px; border-left:3px solid #d4af37;">
+                    <span style="font-size:1.5rem;">{{ activity.icon }}</span>
+                    <div style="flex:1;">
+                        <div style="color:white; font-weight:500;">{{ activity.message }}</div>
+                        <div style="color:rgba(255,255,255,0.3); font-size:0.75rem;">
+                            {{ activity.time }}
+                        </div>
+                    </div>
+                    {% if activity.link %}
+                    <a href="{{ activity.link }}" style="color:#d4af37; text-decoration:none; font-size:0.8rem; font-weight:500;">
+                        Voir →
+                    </a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <div style="display:flex; align-items:center; gap:15px; padding:10px 15px; background:rgba(255,255,255,0.02); border-radius:12px;">
+                    <span style="font-size:1.5rem;">🎫</span>
+                    <div>
+                        <div style="color:white; font-weight:500;">Nouvelle réservation</div>
+                        <div style="color:rgba(255,255,255,0.3); font-size:0.8rem;">Il y a 5 minutes</div>
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:15px; padding:10px 15px; background:rgba(255,255,255,0.02); border-radius:12px;">
+                    <span style="font-size:1.5rem;">📅</span>
+                    <div>
+                        <div style="color:white; font-weight:500;">Nouvel événement créé</div>
+                        <div style="color:rgba(255,255,255,0.3); font-size:0.8rem;">Il y a 15 minutes</div>
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:15px; padding:10px 15px; background:rgba(255,255,255,0.02); border-radius:12px;">
+                    <span style="font-size:1.5rem;">⭐</span>
+                    <div>
+                        <div style="color:white; font-weight:500;">Nouvelle évaluation</div>
+                        <div style="color:rgba(255,255,255,0.3); font-size:0.8rem;">Il y a 30 minutes</div>
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:15px; padding:10px 15px; background:rgba(255,255,255,0.02); border-radius:12px;">
+                    <span style="font-size:1.5rem;">✏️</span>
+                    <div>
+                        <div style="color:white; font-weight:500;">Événement modifié</div>
+                        <div style="color:rgba(255,255,255,0.3); font-size:0.8rem;">Il y a 1 heure</div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Section d'inspiration -->
+<div class="container py-4">
+    <div style="background:linear-gradient(135deg, rgba(212,175,55,0.05), rgba(212,175,55,0.01)); border:1px solid rgba(212,175,55,0.1); border-radius:20px; padding:40px; text-align:center;">
+        <div style="font-size:2.5rem; margin-bottom:15px;">💡</div>
+        <h4 style="color:white; font-weight:600; margin-bottom:10px;">Prêt à organiser votre événement ?</h4>
+        <p style="color:rgba(255,255,255,0.5); max-width:600px; margin:0 auto 20px;">
+            Créez votre événement en quelques minutes, gérez les réservations et partagez vos moments
+        </p>
+        <a href="{{ url_for('events.create_event') }}" class="btn-gold" 
+           style="width:auto; padding:12px 40px; text-decoration:none; display:inline-block;">
+            🚀 Commencer maintenant
+        </a>
+    </div>
+</div>
+
+<!-- Footer Space -->
+<div style="height:20px;"></div>
+
+<style>
+.dark-card {
+    transition: all 0.3s ease;
+}
+.dark-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(212,175,55,0.4);
+    box-shadow: 0 20px 50px rgba(212,175,55,0.08);
+}
+.btn-gold {
+    transition: all 0.3s ease;
+}
+.btn-gold:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 35px rgba(212,175,55,0.3);
+}
+</style>
+
+{% endblock %}

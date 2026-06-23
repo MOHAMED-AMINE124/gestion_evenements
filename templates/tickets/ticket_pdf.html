@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket - {{ ticket.title }}</title>
+    <style>
+        /* ============================================
+           هاد الـ CSS خاص يكون داخل الـ HTML مباشرة
+           باش الـ PDF يقدر يقراه
+           ============================================ */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body { 
+            font-family: Arial, Helvetica, sans-serif; 
+            background: #0a0a0a; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            padding: 20px;
+        }
+        
+        .ticket-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .ticket { 
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a); 
+            border: 3px solid #d4af37; 
+            border-radius: 20px; 
+            padding: 40px; 
+            max-width: 500px; 
+            width: 100%; 
+            text-align: center; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        }
+        
+        .ticket .logo { 
+            font-size: 3rem; 
+            margin-bottom: 5px; 
+        }
+        
+        .ticket h1 { 
+            color: #d4af37; 
+            font-size: 2rem; 
+            margin-bottom: 5px; 
+            font-weight: 700;
+            letter-spacing: 3px;
+        }
+        
+        .ticket .subtitle {
+            color: rgba(255,255,255,0.3);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .ticket .event { 
+            color: #ffffff; 
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            margin: 15px 0 10px;
+            padding: 10px;
+            background: rgba(212,175,55,0.08);
+            border-radius: 10px;
+            border-left: 3px solid #d4af37;
+            border-right: 3px solid #d4af37;
+        }
+        
+        .ticket .details { 
+            color: rgba(255,255,255,0.7); 
+            font-size: 0.95rem; 
+            line-height: 2.2; 
+            margin: 15px 0; 
+            background: rgba(255,255,255,0.03);
+            padding: 15px;
+            border-radius: 12px;
+        }
+        
+        .ticket .details .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .ticket .details .row:last-child {
+            border-bottom: none;
+        }
+        
+        .ticket .details .label {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.85rem;
+        }
+        
+        .ticket .details .value {
+            color: #ffffff;
+            font-weight: 600;
+        }
+        
+        .ticket .details .value.gold {
+            color: #d4af37;
+            font-size: 1.1rem;
+        }
+        
+        .ticket .qr { 
+            margin: 20px 0; 
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        
+        .ticket .qr img { 
+            width: 150px; 
+            height: 150px; 
+            display: block;
+        }
+        
+        .ticket .badge { 
+            background: linear-gradient(135deg, #d4af37, #b8960f); 
+            color: #0a0a0a; 
+            padding: 8px 30px; 
+            border-radius: 30px; 
+            font-weight: 700; 
+            display: inline-block;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            margin: 10px 0;
+        }
+        
+        .ticket .info { 
+            color: rgba(255,255,255,0.25); 
+            font-size: 0.7rem; 
+            margin-top: 10px;
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+        
+        .ticket .footer { 
+            color: rgba(255,255,255,0.2); 
+            font-size: 0.65rem; 
+            margin-top: 20px; 
+            border-top: 1px solid rgba(212,175,55,0.15); 
+            padding-top: 15px;
+            letter-spacing: 1px;
+        }
+        
+        .ticket .line {
+            width: 80%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(212,175,55,0.3), transparent);
+            margin: 15px auto;
+        }
+        
+        /* ============================================
+           عند الطباعة
+           ============================================ */
+        @media print {
+            body { 
+                background: white; 
+                padding: 0;
+                margin: 0;
+            }
+            .ticket { 
+                border: 2px solid #d4af37; 
+                box-shadow: none;
+                border-radius: 15px;
+                background: linear-gradient(135deg, #f8f8f8, #e8e8e8);
+                max-width: 450px;
+                padding: 30px;
+            }
+            .ticket .event { 
+                color: #1a1a1a;
+                background: rgba(212,175,55,0.1);
+            }
+            .ticket .details { 
+                color: #333;
+                background: rgba(0,0,0,0.02);
+            }
+            .ticket .details .label {
+                color: #666;
+            }
+            .ticket .details .value {
+                color: #1a1a1a;
+            }
+            .ticket .details .value.gold {
+                color: #b8960f;
+            }
+            .ticket .badge {
+                background: linear-gradient(135deg, #d4af37, #b8960f);
+                color: #1a1a1a;
+            }
+            .ticket .footer {
+                color: #999;
+                border-top-color: rgba(212,175,55,0.2);
+            }
+            .ticket .subtitle {
+                color: #999;
+            }
+            .ticket .info {
+                color: #aaa;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ticket-container">
+        <div class="ticket">
+            
+            <!-- Logo -->
+            <div class="logo">🎓</div>
+            <h1>BILLET</h1>
+            <div class="subtitle">École Events</div>
+            
+            <!-- Événement -->
+            <div class="event">{{ ticket.title }}</div>
+            
+            <!-- Détails -->
+            <div class="details">
+                <div class="row">
+                    <span class="label">📅 Date & Heure</span>
+                    <span class="value">{{ ticket.event_date.strftime('%d/%m/%Y à %H:%M') }}</span>
+                </div>
+                <div class="row">
+                    <span class="label">📍 Lieu</span>
+                    <span class="value">{{ ticket.location }}</span>
+                </div>
+                <div class="row">
+                    <span class="label">🪑 Place</span>
+                    <span class="value">#{{ ticket.seat_number }}</span>
+                </div>
+                <div class="row">
+                    <span class="label">💰 Prix</span>
+                    <span class="value gold">{{ ticket.payment_amount }} MAD</span>
+                </div>
+            </div>
+            
+            <div class="line"></div>
+            
+            <!-- QR Code -->
+            <div class="qr">
+                <img src="{{ url_for('static', filename='uploads/qr_' + ticket.qr_code + '.png', _external=True) }}" 
+                     alt="QR Code">
+            </div>
+            
+            <!-- Badge -->
+            <div class="badge">✓ PAYÉ</div>
+            
+            <!-- Info -->
+            <div class="info">🔑 {{ ticket.qr_code[:12] }}...</div>
+            
+            <!-- Footer -->
+            <div class="footer">École Events • Tous droits réservés</div>
+            
+            <!-- Bouton d'impression (cache à l'impression) -->
+            <div class="no-print" style="margin-top:20px;">
+                <button onclick="window.print()" 
+                        style="background:linear-gradient(135deg,#d4af37,#9a7b10); color:#0a0a0a; border:none; padding:10px 30px; border-radius:10px; font-weight:700; cursor:pointer; font-size:0.9rem;">
+                    🖨️ Imprimer / Télécharger PDF
+                </button>
+                <br>
+                <a href="{{ url_for('tickets.my_tickets') }}" 
+                   style="color:rgba(255,255,255,0.3); text-decoration:none; font-size:0.8rem; display:inline-block; margin-top:10px;">
+                    ← Retour à mes tickets
+                </a>
+            </div>
+            
+        </div>
+    </div>
+</body>
+</html>

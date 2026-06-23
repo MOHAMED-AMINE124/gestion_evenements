@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}Paiement - École Events{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:24px; padding:40px;">
+
+                <div class="text-center mb-4">
+                    <div style="font-size:4rem; margin-bottom:15px;">💳</div>
+                    <h3 style="color:white; font-weight:700;">Paiement</h3>
+                    <p style="color:rgba(255,255,255,0.45);">Confirmez votre réservation</p>
+                </div>
+
+                <div style="background:rgba(212,175,55,0.05); border:1px solid rgba(212,175,55,0.15); border-radius:16px; padding:20px; margin-bottom:25px;">
+                    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+                        <span style="color:rgba(255,255,255,0.6);">Événement</span>
+                        <span style="color:white; font-weight:600;">{{ ticket.title }}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+                        <span style="color:rgba(255,255,255,0.6);">Place</span>
+                        <span style="color:white; font-weight:600;">#{{ ticket.seat_number }}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:8px 0;">
+                        <span style="color:rgba(255,255,255,0.6);">Montant</span>
+                        <span style="color:#d4af37; font-weight:700; font-size:1.2rem;">
+                            {% if ticket.price == 0 %}Gratuit{% else %}{{ ticket.price }} MAD{% endif %}
+                        </span>
+                    </div>
+                </div>
+
+                <form method="POST">
+                    {% if ticket.price == 0 %}
+                    <div style="background:rgba(46,213,115,0.1); border:1px solid rgba(46,213,115,0.2); border-radius:12px; padding:15px; text-align:center; margin-bottom:20px;">
+                        <span style="color:#2ed573; font-weight:600;">🎉 Cet événement est gratuit !</span>
+                    </div>
+                    {% else %}
+                    <div style="background:rgba(212,175,55,0.05); border:1px solid rgba(212,175,55,0.15); border-radius:12px; padding:15px; margin-bottom:20px;">
+                        <div style="display:flex; gap:15px; align-items:center;">
+                            <span style="font-size:2rem;">💳</span>
+                            <div style="flex:1;">
+                                <label style="color:rgba(255,255,255,0.5); font-size:0.8rem;">Numéro de carte</label>
+                                <input type="text" class="form-control" placeholder="4242 4242 4242 4242" 
+                                       style="background:#1f1f1f; border:1px solid rgba(212,175,55,0.2); border-radius:8px; color:white; padding:10px;">
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:15px; margin-top:10px;">
+                            <div style="flex:1;">
+                                <label style="color:rgba(255,255,255,0.5); font-size:0.8rem;">Date d'expiration</label>
+                                <input type="text" class="form-control" placeholder="MM/YY" 
+                                       style="background:#1f1f1f; border:1px solid rgba(212,175,55,0.2); border-radius:8px; color:white; padding:10px;">
+                            </div>
+                            <div style="flex:1;">
+                                <label style="color:rgba(255,255,255,0.5); font-size:0.8rem;">CVV</label>
+                                <input type="text" class="form-control" placeholder="123" 
+                                       style="background:#1f1f1f; border:1px solid rgba(212,175,55,0.2); border-radius:8px; color:white; padding:10px;">
+                            </div>
+                        </div>
+                        <div style="margin-top:10px; background:rgba(255,255,255,0.03); border-radius:8px; padding:8px; text-align:center;">
+                            <span style="color:rgba(255,255,255,0.2); font-size:0.7rem;">💡 Mode test: utilisez n'importe quelles données</span>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <button type="submit" class="btn-gold" style="padding:16px;">
+                        {% if ticket.price == 0 %}
+                        🎫 Confirmer la réservation
+                        {% else %}
+                        💳 Payer {{ ticket.price }} MAD
+                        {% endif %}
+                    </button>
+                </form>
+
+                <div style="text-align:center; margin-top:20px;">
+                    <a href="{{ url_for('tickets.my_tickets') }}" 
+                       style="color:rgba(255,255,255,0.4); text-decoration:none; font-size:0.9rem;">
+                        ← Annuler et revenir
+                    </a>
+                </div>
+
+                <hr class="gold-divider">
+
+                <div style="text-align:center;">
+                    <p style="color:rgba(255,255,255,0.2); font-size:0.7rem;">
+                        🔒 Paiement sécurisé • Mode test
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

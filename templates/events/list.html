@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% block title %}Événements - École Events{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 style="color:white; font-weight:700;">📅 Événements</h2>
+            <p style="color:rgba(255,255,255,0.45);">Découvrez tous les événements disponibles</p>
+        </div>
+        {% if session.user_id %}
+        <a href="{{ url_for('events.create_event') }}" class="btn-gold"
+           style="padding:12px 25px; border-radius:12px; text-decoration:none; white-space:nowrap; width:auto;">
+            Créer un événement
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Barre de recherche et filtre -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-8">
+            <form method="GET" action="{{ url_for('events.list_events') }}" class="d-flex gap-2">
+                <input type="text" name="search" class="form-control" 
+                       placeholder="🔍 Rechercher un événement..." 
+                       value="{{ search }}">
+                <button type="submit" class="btn-gold" style="width:auto; padding:12px 25px;">
+                    Rechercher
+                </button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <form method="GET" action="{{ url_for('events.list_events') }}" class="d-flex gap-2">
+                <select name="status" class="form-select" onchange="this.form.submit()">
+                    <option value="active" {% if filter_status == 'active' %}selected{% endif %}>📌 Actifs</option>
+                    <option value="cancelled" {% if filter_status == 'cancelled' %}selected{% endif %}>❌ Annulés</option>
+                    <option value="completed" {% if filter_status == 'completed' %}selected{% endif %}>✅ Terminés</option>
+                </select>
+            </form>
+        </div>
+    </div>
+
+    {% if events %}
+    <div class="row g-4">
+        {% for event in events %}
+        <div class="col-md-4">
+            <div class="dark-card" style="padding:0; overflow:hidden;">
+
+                <div style="height:200px; background:linear-gradient(135deg, #1a1a1a, #2a2a2a); position:relative; overflow:hidden;">
+                    {% if event.image and event.image != 'default_event.jpg' %}
+                    <img src="{{ url_for('static', filename='uploads/' + event.image) }}"
+                         style="width:100%; height:100%; object-fit:cover;">
+                    {% else %}
+                    <div style="height:100%; display:flex; align-items:center; justify-content:center;">
+                        <span style="font-size:4rem;">📅</span>
+                    </div>
+                    {% endif %}
+
+                    <!-- Prix -->
+                    <div style="position:absolute; top:15px; right:15px; background:linear-gradient(135deg,#d4af37,#9a7b10); color:#0a0a0a; padding:5px 12px; border-radius:20px; font-weight:700; font-size:0.85rem;">
+                        {% if event.price == 0 %}Gratuit{% else %}{{ event.price }} MAD{% endif %}
+                    </div>
+
+                    <!-- ============================================ -->
+                    <!-- 🔴 Status Badge (Nouveau) -->
+                    <!-- ============================================ -->
+                    <div style="position:absolute; bottom:15px; left:15px;">
+                        {% if event.status == 'active' %}
+                            {% if event.event_date < now %}
+                            <span style="background:rgba(46,213,115,0.15); color:#2ed573; padding:4px 12px; border-radius:20px; font-size:0.7rem; font-weight:600; border:1px solid rgba(46,213,115,0.3);">
+                                🟢 En cours
+                            </span>
+                            {% else %}
+                            <span style="background:rgba(212,175,55,0.15); color:#d4af37; padding:4px 12px; border-radius:20px; font-size:0.7rem; font-weight:600; border:1px solid rgba(212,175,55,0.3);">
+                                🟡 À venir
+                            </span>
+                            {% endif %}
+                        {% elif event.status == 'cancelled' %}
+                        <span style="background:rgba(220,53,69,0.15); color:#ff6b6b; padding:4px 12px; border-radius:20px; font-size:0.7rem; font-weight:600; border:1px solid rgba(220,53,69,0.3);">
+                            🔴 Annulé
+                        </span>
+                        {% else %}
+                        <span style="background:rgba(255,255,255,0.05); color:rgba(255,255,255,0.4); padding:4px 12px; border-radius:20px; font-size:0.7rem; font-weight:600; border:1px solid rgba(255,255,255,0.1);">
+                            ⚪ Terminé
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Note moyenne -->
+                    {% if event.average_rating and event.average_rating > 0 %}
+                    <div style="position:absolute; bottom:15px; right:15px; background:rgba(0,0,0,0.7); padding:4px 10px; border-radius:12px; display:flex; gap:5px; align-items:center;">
+                        <span style="color:#d4af37; font-size:0.8rem;">⭐</span>
+                        <span style="color:white; font-size:0.8rem; font-weight:600;">{{ "%.1f"|format(event.average_rating) }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div style="padding:25px;">
+                    <h5 style="color:white; font-weight:700; margin-bottom:10px;">{{ event.title }}</h5>
+                    <p style="color:rgba(255,255,255,0.4); font-size:0.85rem; margin-bottom:15px;">
+                        {{ event.description[:80] }}...
+                    </p>
+                    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;">
+                        <span style="color:rgba(255,255,255,0.6); font-size:0.85rem;">
+                            📅 {{ event.event_date.strftime('%d/%m/%Y à %H:%M') }}
+                        </span>
+                        <span style="color:rgba(255,255,255,0.6); font-size:0.85rem;">
+                            📍 {{ event.location }}
+                        </span>
+                        <span style="color:rgba(255,255,255,0.6); font-size:0.85rem;">
+                            🪑 {{ event.available_seats }} places disponibles
+                        </span>
+                    </div>
+                    <a href="{{ url_for('events.event_detail', event_id=event.id) }}"
+                       class="btn-gold" style="display:block; text-align:center; text-decoration:none; padding:12px; width:auto;">
+                        Voir détails
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div style="text-align:center; padding:80px 0;">
+        <span style="font-size:5rem;">📭</span>
+        <h4 style="color:white; margin-top:20px;">Aucun événement disponible</h4>
+        <p style="color:rgba(255,255,255,0.45);">Soyez le premier à créer un événement!</p>
+        {% if session.user_id %}
+        <a href="{{ url_for('events.create_event') }}" class="btn-gold"
+           style="display:inline-block; margin-top:20px; padding:14px 30px; border-radius:12px; text-decoration:none; width:auto;">
+            Créer un événement
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

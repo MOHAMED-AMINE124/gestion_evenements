@@ -1,0 +1,310 @@
+{% extends 'base.html' %}
+{% block title %}Mon Profil - École Events{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row g-4">
+
+        <!-- ============================================
+        القسم الأيسر: معلومات المستخدم
+        ============================================ -->
+        <div class="col-md-4">
+            <div style="
+                background: linear-gradient(145deg, #161616, #1f1f1f);
+                border: 1px solid rgba(212,175,55,0.25);
+                border-radius: 24px;
+                padding: 35px 25px;
+                text-align: center;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+                position: relative;
+                overflow: hidden;
+            ">
+                <!-- خلفية ذهبية خفيفة -->
+                <div style="
+                    position: absolute;
+                    top: -50px;
+                    right: -50px;
+                    width: 150px;
+                    height: 150px;
+                    background: radial-gradient(circle, rgba(212,175,55,0.05), transparent);
+                    border-radius: 50%;
+                "></div>
+                <div style="
+                    position: absolute;
+                    bottom: -80px;
+                    left: -80px;
+                    width: 200px;
+                    height: 200px;
+                    background: radial-gradient(circle, rgba(212,175,55,0.03), transparent);
+                    border-radius: 50%;
+                "></div>
+
+                <!-- Avatar -->
+                <div style="
+                    width: 120px;
+                    height: 120px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, #d4af37, #9a7b10);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto 20px;
+                    font-size: 3rem;
+                    font-weight: 700;
+                    color: #0a0a0a;
+                    box-shadow: 0 8px 30px rgba(212,175,55,0.3);
+                    border: 3px solid rgba(212,175,55,0.3);
+                    position: relative;
+                    z-index: 1;
+                ">
+                    {{ user.full_name[0].upper() }}
+                </div>
+
+                <!-- Nom -->
+                <h4 style="color:white; font-weight:700; font-size:1.4rem; position:relative; z-index:1;">
+                    {{ user.full_name }}
+                </h4>
+                
+                <!-- Email -->
+                <p style="color:rgba(255,255,255,0.4); font-size:0.9rem; margin:5px 0 15px; position:relative; z-index:1;">
+                    📧 {{ user.email }}
+                </p>
+
+                <!-- Badge Rôle -->
+                <span style="
+                    background: {% if user.role == 'admin' %}rgba(212,175,55,0.2){% elif user.role == 'teacher' %}rgba(26,115,232,0.2){% else %}rgba(255,255,255,0.05){% endif %};
+                    color: {% if user.role == 'admin' %}#d4af37{% elif user.role == 'teacher' %}#6b9fff{% else %}rgba(255,255,255,0.6){% endif %};
+                    padding: 6px 20px;
+                    border-radius: 30px;
+                    font-size: 0.8rem;
+                    font-weight: 600;
+                    border: 1px solid {% if user.role == 'admin' %}rgba(212,175,55,0.3){% elif user.role == 'teacher' %}rgba(26,115,232,0.3){% else %}rgba(255,255,255,0.1){% endif %};
+                    display: inline-block;
+                    position: relative;
+                    z-index: 1;
+                ">
+                    {% if user.role == 'admin' %}👑 Admin
+                    {% elif user.role == 'teacher' %}👨‍🏫 Professeur
+                    {% else %}🎓 Étudiant
+                    {% endif %}
+                </span>
+
+                <hr style="border-color:rgba(212,175,55,0.15); margin:25px 0;">
+
+                <!-- Statistiques -->
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; position:relative; z-index:1;">
+                    <div style="
+                        background: rgba(212,175,55,0.05);
+                        border: 1px solid rgba(212,175,55,0.12);
+                        border-radius: 16px;
+                        padding: 18px 10px;
+                        transition: all 0.3s;
+                    "
+                    onmouseover="this.style.borderColor='rgba(212,175,55,0.4)'; this.style.background='rgba(212,175,55,0.08)'"
+                    onmouseout="this.style.borderColor='rgba(212,175,55,0.12)'; this.style.background='rgba(212,175,55,0.05)'">
+                        <div style="font-size:2rem; font-weight:700; color:#d4af37;">{{ tickets_count }}</div>
+                        <div style="color:rgba(255,255,255,0.4); font-size:0.75rem; margin-top:3px;">🎫 Tickets</div>
+                    </div>
+                    <div style="
+                        background: rgba(212,175,55,0.05);
+                        border: 1px solid rgba(212,175,55,0.12);
+                        border-radius: 16px;
+                        padding: 18px 10px;
+                        transition: all 0.3s;
+                    "
+                    onmouseover="this.style.borderColor='rgba(212,175,55,0.4)'; this.style.background='rgba(212,175,55,0.08)'"
+                    onmouseout="this.style.borderColor='rgba(212,175,55,0.12)'; this.style.background='rgba(212,175,55,0.05)'">
+                        <div style="font-size:2rem; font-weight:700; color:#d4af37;">{{ events_count }}</div>
+                        <div style="color:rgba(255,255,255,0.4); font-size:0.75rem; margin-top:3px;">📅 Événements</div>
+                    </div>
+                </div>
+
+                <!-- Date d'inscription -->
+                <p style="color:rgba(255,255,255,0.2); font-size:0.75rem; margin-top:20px; position:relative; z-index:1;">
+                    🗓️ Membre depuis {{ user.created_at.strftime('%d/%m/%Y') }}
+                </p>
+            </div>
+        </div>
+
+        <!-- ============================================
+        القسم الأيمن: Modifier le profil + Changer mot de passe
+        ============================================ -->
+        <div class="col-md-8">
+
+            <!-- ==================== -->
+            <!-- Modifier le profil    -->
+            <!-- ==================== -->
+            <div style="
+                background: linear-gradient(145deg, #161616, #1f1f1f);
+                border: 1px solid rgba(212,175,55,0.2);
+                border-radius: 24px;
+                padding: 35px;
+                margin-bottom: 25px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            ">
+                <div style="display:flex; align-items:center; gap:12px; margin-bottom:25px;">
+                    <span style="font-size:1.8rem;">✏️</span>
+                    <h5 style="color:white; font-weight:700; margin:0; font-size:1.2rem;">Modifier le profil</h5>
+                    <span style="
+                        background: rgba(212,175,55,0.15);
+                        color: #d4af37;
+                        font-size:0.6rem;
+                        padding:2px 12px;
+                        border-radius:20px;
+                        font-weight:600;
+                    ">ACTIF</span>
+                </div>
+
+                <form method="POST" action="{{ url_for('profile.edit_profile') }}" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label style="color:rgba(255,255,255,0.6); font-weight:500; font-size:0.9rem; margin-bottom:8px; display:block;">
+                            👤 Nom complet
+                        </label>
+                        <input type="text" name="full_name" class="form-control form-control-lg"
+                               value="{{ user.full_name }}" required
+                               style="background:#1f1f1f !important; border:1px solid rgba(212,175,55,0.15) !important; border-radius:12px !important; color:white !important; padding:14px 18px !important;">
+                    </div>
+                    <div class="mb-3">
+                        <label style="color:rgba(255,255,255,0.6); font-weight:500; font-size:0.9rem; margin-bottom:8px; display:block;">
+                            📧 Email
+                        </label>
+                        <input type="email" name="email" class="form-control form-control-lg"
+                               value="{{ user.email }}" required
+                               style="background:#1f1f1f !important; border:1px solid rgba(212,175,55,0.15) !important; border-radius:12px !important; color:white !important; padding:14px 18px !important;">
+                    </div>
+                    <div class="mb-4">
+                        <label style="color:rgba(255,255,255,0.6); font-weight:500; font-size:0.9rem; margin-bottom:8px; display:block;">
+                            🖼️ Photo de profil
+                        </label>
+                        <div style="
+                            background:#1a1a1a;
+                            border:1px dashed rgba(212,175,55,0.2);
+                            border-radius:12px;
+                            padding:20px;
+                            text-align:center;
+                            cursor:pointer;
+                            transition: all 0.3s;
+                        "
+                        onmouseover="this.style.borderColor='rgba(212,175,55,0.4)'; this.style.background='#202020'"
+                        onmouseout="this.style.borderColor='rgba(212,175,55,0.2)'; this.style.background='#1a1a1a'">
+                            <input type="file" name="profile_pic" accept="image/*" 
+                                   style="display:none;" id="profilePicInput"
+                                   onchange="document.getElementById('fileName').textContent = this.files[0] ? this.files[0].name : 'Aucun fichier choisi'">
+                            <label for="profilePicInput" style="cursor:pointer; display:block;">
+                                <span style="font-size:2rem; display:block; margin-bottom:5px;">📤</span>
+                                <span style="color:rgba(255,255,255,0.4);">Cliquez pour choisir une image</span>
+                                <br>
+                                <span id="fileName" style="color:rgba(255,255,255,0.2); font-size:0.8rem;">Aucun fichier choisi</span>
+                            </label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-gold" style="padding:14px; border-radius:12px;">
+                        💾 Enregistrer les modifications
+                    </button>
+                </form>
+            </div>
+
+            <!-- ==================== -->
+            <!-- Changer mot de passe  -->
+            <!-- ==================== -->
+            <div style="
+                background: linear-gradient(145deg, #161616, #1f1f1f);
+                border: 1px solid rgba(212,175,55,0.2);
+                border-radius: 24px;
+                padding: 35px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            ">
+                <div style="display:flex; align-items:center; gap:12px; margin-bottom:25px;">
+                    <span style="font-size:1.8rem;">🔒</span>
+                    <h5 style="color:white; font-weight:700; margin:0; font-size:1.2rem;">Changer le mot de passe</h5>
+                    <span style="
+                        background: rgba(220,53,69,0.15);
+                        color: #ff6b7a;
+                        font-size:0.6rem;
+                        padding:2px 12px;
+                        border-radius:20px;
+                        font-weight:600;
+                    ">SÉCURISÉ</span>
+                </div>
+
+                <form method="POST" action="{{ url_for('profile.change_password') }}">
+                    <div class="mb-3">
+                        <label style="color:rgba(255,255,255,0.6); font-weight:500; font-size:0.9rem; margin-bottom:8px; display:block;">
+                            🔑 Ancien mot de passe
+                        </label>
+                        <input type="password" name="old_password" class="form-control form-control-lg"
+                               placeholder="••••••••" required
+                               style="background:#1f1f1f !important; border:1px solid rgba(212,175,55,0.15) !important; border-radius:12px !important; color:white !important; padding:14px 18px !important;">
+                    </div>
+                    <div class="mb-4">
+                        <label style="color:rgba(255,255,255,0.6); font-weight:500; font-size:0.9rem; margin-bottom:8px; display:block;">
+                            🆕 Nouveau mot de passe
+                        </label>
+                        <input type="password" name="new_password" class="form-control form-control-lg"
+                               placeholder="••••••••" required
+                               style="background:#1f1f1f !important; border:1px solid rgba(212,175,55,0.15) !important; border-radius:12px !important; color:white !important; padding:14px 18px !important;">
+                    </div>
+                    <button type="submit" class="btn-gold" style="padding:14px; border-radius:12px; background:linear-gradient(135deg,#ff6b6b,#c0392b);">
+                        🔄 Changer le mot de passe
+                    </button>
+                </form>
+            </div>
+
+            <!-- ==================== -->
+            <!-- Derniers tickets       -->
+            <!-- ==================== -->
+            {% if recent_tickets %}
+            <div style="
+                background: linear-gradient(145deg, #161616, #1f1f1f);
+                border: 1px solid rgba(212,175,55,0.2);
+                border-radius: 24px;
+                padding: 35px;
+                margin-top: 25px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            ">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span style="font-size:1.8rem;">🎫</span>
+                        <h5 style="color:white; font-weight:700; margin:0; font-size:1.2rem;">Mes dernières réservations</h5>
+                    </div>
+                    <a href="{{ url_for('tickets.my_tickets') }}" 
+                       style="color:#d4af37; text-decoration:none; font-weight:600; font-size:0.85rem;">
+                        Voir tout →
+                    </a>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    {% for ticket in recent_tickets %}
+                    <div style="
+                        background:rgba(255,255,255,0.02);
+                        border:1px solid rgba(255,255,255,0.05);
+                        border-radius:14px;
+                        padding:15px 20px;
+                        display:flex;
+                        justify-content:space-between;
+                        align-items:center;
+                        transition: all 0.3s;
+                    "
+                    onmouseover="this.style.background='rgba(255,255,255,0.04)'; this.style.borderColor='rgba(212,175,55,0.2)'"
+                    onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.borderColor='rgba(255,255,255,0.05)'">
+                        <div>
+                            <div style="color:white; font-weight:600; font-size:1rem;">{{ ticket.title }}</div>
+                            <div style="color:rgba(255,255,255,0.35); font-size:0.8rem; margin-top:3px;">
+                                📅 {{ ticket.event_date.strftime('%d/%m/%Y') }} • 🪑 Place #{{ ticket.seat_number }}
+                            </div>
+                        </div>
+                        <a href="{{ url_for('events.event_detail', event_id=ticket.event_id) }}" 
+                           style="color:#d4af37; text-decoration:none; font-weight:600; font-size:0.85rem; padding:5px 15px; border-radius:8px; border:1px solid rgba(212,175,55,0.15); transition: all 0.3s;"
+                           onmouseover="this.style.background='rgba(212,175,55,0.1)'"
+                           onmouseout="this.style.background='transparent'">
+                            Voir →
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}Vérification - École Events{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="text-center mb-4">
+            <svg style="width:80px; height:80px;" viewBox="0 0 680 380">
+                <defs>
+                    <linearGradient id="gv" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#f5e07a"/>
+                        <stop offset="50%" style="stop-color:#d4af37"/>
+                        <stop offset="100%" style="stop-color:#9a7400"/>
+                    </linearGradient>
+                </defs>
+                <circle cx="340" cy="175" r="120" fill="#111111" stroke="url(#gv)" stroke-width="2.5"/>
+                <circle cx="340" cy="175" r="108" fill="none" stroke="url(#gv)" stroke-width="0.7" opacity="0.35"/>
+                <circle cx="340" cy="72" r="2.5" fill="url(#gv)" opacity="0.5"/>
+                <circle cx="340" cy="278" r="2.5" fill="url(#gv)" opacity="0.5"/>
+                <circle cx="237" cy="175" r="2.5" fill="url(#gv)" opacity="0.5"/>
+                <circle cx="443" cy="175" r="2.5" fill="url(#gv)" opacity="0.5"/>
+                <text x="340" y="213" font-family="Georgia, serif" font-size="88" font-weight="700" fill="url(#gv)" text-anchor="middle" letter-spacing="-2">GE</text>
+                <line x1="275" y1="228" x2="405" y2="228" stroke="url(#gv)" stroke-width="0.7" opacity="0.35"/>
+                <polygon points="340,224 343,228 340,232 337,228" fill="url(#gv)" opacity="0.6"/>
+            </svg>
+            <h3 class="mt-3">Vérification Email</h3>
+            <p class="subtitle mt-1">Code envoyé à <strong style="color:#d4af37;">{{ email }}</strong></p>
+        </div>
+
+        <!-- Info Box -->
+        <div style="background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.2); border-radius:14px; padding:18px; margin-bottom:25px;">
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+                <span style="font-size:1.5rem;">📧</span>
+                <div>
+                    <p style="color:white; font-weight:600; margin:0 0 5px;">Vérifiez votre boîte mail</p>
+                    <p style="color:rgba(255,255,255,0.5); font-size:0.85rem; margin:0;">
+                        Un code à 6 chiffres a été envoyé à <strong style="color:#d4af37;">{{ email }}</strong>. 
+                        Vérifiez aussi vos spams.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Steps -->
+        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:25px;">
+            <div style="display:flex; gap:12px; align-items:center;">
+                <div style="width:28px; height:28px; background:linear-gradient(135deg,#d4af37,#9a7b10); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; color:#0a0a0a; flex-shrink:0;">1</div>
+                <p style="color:rgba(255,255,255,0.6); font-size:0.85rem; margin:0;">Ouvrez votre email</p>
+            </div>
+            <div style="display:flex; gap:12px; align-items:center;">
+                <div style="width:28px; height:28px; background:linear-gradient(135deg,#d4af37,#9a7b10); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; color:#0a0a0a; flex-shrink:0;">2</div>
+                <p style="color:rgba(255,255,255,0.6); font-size:0.85rem; margin:0;">Copiez le code à 6 chiffres</p>
+            </div>
+            <div style="display:flex; gap:12px; align-items:center;">
+                <div style="width:28px; height:28px; background:linear-gradient(135deg,#d4af37,#9a7b10); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; color:#0a0a0a; flex-shrink:0;">3</div>
+                <p style="color:rgba(255,255,255,0.6); font-size:0.85rem; margin:0;">Collez-le ci-dessous</p>
+            </div>
+        </div>
+
+        <form method="POST">
+            <div class="mb-4">
+                <label class="form-label">Code de vérification</label>
+                <input type="text" name="code" class="form-control form-control-lg text-center"
+                       placeholder="000000" maxlength="6" required
+                       style="font-size:1.8rem; letter-spacing:10px; font-weight:700;">
+                <small style="color:rgba(255,255,255,0.35); display:block; text-align:center; margin-top:8px;">
+                    ⏱️ Ce code expire dans 10 minutes
+                </small>
+            </div>
+            <button type="submit" class="btn-gold">
+                ✅ Vérifier mon compte
+            </button>
+        </form>
+
+        <hr class="gold-divider">
+
+        <div class="text-center">
+            <p style="color:rgba(255,255,255,0.45); font-size:0.85rem; margin-bottom:8px;">
+                Pas reçu le code?
+                <a href="{{ url_for('auth.register') }}" class="gold-link"> Réessayer</a>
+            </p>
+            <p style="color:rgba(255,255,255,0.3); font-size:0.8rem;">
+                Vérifiez aussi votre dossier spam
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

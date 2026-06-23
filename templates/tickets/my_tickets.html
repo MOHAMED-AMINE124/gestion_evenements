@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% block title %}Mes Tickets - École Events{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="mb-5">
+        <h2 style="color:white; font-weight:700;">🎫 Mes Tickets</h2>
+        <p style="color:rgba(255,255,255,0.45);">Vos réservations et billets</p>
+    </div>
+
+    {% if tickets %}
+    <div class="row g-4">
+        {% for ticket in tickets %}
+        <div class="col-md-6">
+            <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:20px; overflow:hidden;">
+
+                <div style="background:linear-gradient(135deg,#d4af37,#9a7b10); padding:20px 25px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div style="color:#0a0a0a; font-size:0.8rem; font-weight:600;">BILLET</div>
+                            <div style="color:#0a0a0a; font-weight:700; font-size:1.2rem;">{{ ticket.title }}</div>
+                        </div>
+                        <div style="background:rgba(0,0,0,0.2); padding:8px 15px; border-radius:20px;">
+                            <span style="color:#0a0a0a; font-weight:700; font-size:0.85rem;">
+                                Place #{{ ticket.seat_number }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="padding:25px; display:flex; gap:20px;">
+
+                    <div style="flex-shrink:0;">
+                        {% if ticket.qr_code %}
+                        <img src="{{ url_for('static', filename='uploads/qr_' + ticket.qr_code + '.png') }}"
+                             style="width:100px; height:100px; border-radius:10px; background:white; padding:5px;">
+                        {% else %}
+                        <div style="width:100px; height:100px; border-radius:10px; background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center; font-size:2rem;">
+                            🎫
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div style="flex:1;">
+                        <div style="display:flex; flex-direction:column; gap:8px;">
+                            <div style="color:rgba(255,255,255,0.6); font-size:0.85rem;">
+                                📅 {{ ticket.event_date.strftime('%d/%m/%Y à %H:%M') }}
+                            </div>
+                            <div style="color:rgba(255,255,255,0.6); font-size:0.85rem;">
+                                📍 {{ ticket.location }}
+                            </div>
+                            <div style="color:rgba(255,255,255,0.6); font-size:0.85rem;">
+                                💰 {% if ticket.payment_amount == 0 %}Gratuit{% else %}{{ ticket.payment_amount }} MAD{% endif %}
+                            </div>
+                            <div style="margin-top:5px; display:flex; gap:8px; flex-wrap:wrap;">
+                                {% if ticket.payment_status == 'paid' %}
+                                <span style="background:rgba(46,213,115,0.15); color:#2ed573; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:600; border:1px solid rgba(46,213,115,0.3);">
+                                    ✅ Payé
+                                </span>
+                                {% elif ticket.payment_status == 'pending' %}
+                                <span style="background:rgba(255,193,7,0.15); color:#ffc107; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:600; border:1px solid rgba(255,193,7,0.3);">
+                                    ⏳ En attente
+                                </span>
+                                {% else %}
+                                <span style="background:rgba(255,107,107,0.15); color:#ff6b6b; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:600; border:1px solid rgba(255,107,107,0.3);">
+                                    ❌ Annulé
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="padding:15px 25px; border-top:1px solid rgba(212,175,55,0.1); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <span style="color:rgba(255,255,255,0.3); font-size:0.75rem;">
+                        Réservé le {{ ticket.booked_at.strftime('%d/%m/%Y') }}
+                    </span>
+                    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                        <a href="{{ url_for('events.event_detail', event_id=ticket.event_id) }}"
+                           style="color:#d4af37; font-size:0.85rem; text-decoration:none; font-weight:600;">
+                            Voir événement →
+                        </a>
+                        
+                        <!-- زر الدفع (يظهر فقط إذا كانت الحالة pending) -->
+                        {% if ticket.payment_status == 'pending' %}
+                        <a href="{{ url_for('tickets.pay_ticket', ticket_id=ticket.id) }}" 
+                           style="background:linear-gradient(135deg,#d4af37,#9a7b10); color:#0a0a0a; padding:5px 15px; border-radius:8px; text-decoration:none; font-size:0.8rem; font-weight:600; transition:all 0.3s;"
+                           onmouseover="this.style.transform='scale(1.05)'"
+                           onmouseout="this.style.transform='scale(1)'">
+                            💳 Payer
+                        </a>
+                        {% endif %}
+                        
+                        <!-- زر PDF (يظهر فقط إذا كانت الحالة paid) -->
+                        {% if ticket.payment_status == 'paid' %}
+                        <a href="{{ url_for('tickets.download_pdf', ticket_id=ticket.id) }}" 
+                           target="_blank"
+                           style="background:rgba(212,175,55,0.15); color:#d4af37; border:1px solid rgba(212,175,55,0.3); 
+                                  padding:5px 12px; border-radius:8px; font-size:0.8rem; text-decoration:none; transition:all 0.3s;"
+                           onmouseover="this.style.background='rgba(212,175,55,0.25)'"
+                           onmouseout="this.style.background='rgba(212,175,55,0.15)'">
+                            📄 PDF
+                        </a>
+                        {% endif %}
+                        
+                        <!-- زر الإلغاء (يظهر فقط إذا كانت الحالة paid) -->
+                        {% if ticket.payment_status == 'paid' %}
+                        <form method="POST" action="{{ url_for('tickets.cancel_ticket', ticket_id=ticket.id) }}"
+                              onsubmit="return confirm('Voulez-vous vraiment annuler ce ticket?')"
+                              style="display:inline;">
+                            <button type="submit" 
+                                    style="background:rgba(220,53,69,0.15); color:#ff6b7a; border:1px solid rgba(220,53,69,0.3); 
+                                           padding:5px 12px; border-radius:8px; font-size:0.8rem; cursor:pointer; transition:all 0.3s;"
+                                    onmouseover="this.style.background='rgba(220,53,69,0.25)'"
+                                    onmouseout="this.style.background='rgba(220,53,69,0.15)'">
+                                ❌ Annuler
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div style="text-align:center; padding:80px 0;">
+        <span style="font-size:5rem;">🎫</span>
+        <h4 style="color:white; margin-top:20px;">Aucun ticket</h4>
+        <p style="color:rgba(255,255,255,0.45);">Vous n'avez pas encore réservé de place</p>
+        <a href="{{ url_for('events.list_events') }}" class="btn-gold"
+           style="display:inline-block; margin-top:20px; padding:14px 30px; border-radius:12px; text-decoration:none; width:auto;">
+            Voir les événements
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

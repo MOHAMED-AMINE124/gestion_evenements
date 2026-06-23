@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Admin - École Events{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="mb-5">
+        <h2 style="color:white; font-weight:700;">📊 Dashboard Admin</h2>
+        <p style="color:rgba(255,255,255,0.45);">Gérez votre plateforme</p>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div style="background:linear-gradient(135deg,#d4af37,#9a7b10); border-radius:20px; padding:25px; text-align:center;">
+                <div style="font-size:2rem; font-weight:700; color:#0a0a0a;">{{ users_count }}</div>
+                <div style="color:#0a0a0a; font-weight:600; margin-top:5px;">Utilisateurs</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:20px; padding:25px; text-align:center;">
+                <div style="font-size:2rem; font-weight:700; color:#d4af37;">{{ events_count }}</div>
+                <div style="color:white; font-weight:600; margin-top:5px;">Événements actifs</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:20px; padding:25px; text-align:center;">
+                <div style="font-size:2rem; font-weight:700; color:#d4af37;">{{ tickets_count }}</div>
+                <div style="color:white; font-weight:600; margin-top:5px;">Tickets vendus</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:20px; padding:25px; text-align:center;">
+                <div style="font-size:2rem; font-weight:700; color:#d4af37;">{{ revenue }} MAD</div>
+                <div style="color:white; font-weight:600; margin-top:5px;">Revenus</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events Table -->
+    <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:20px; padding:30px; margin-bottom:30px;">
+        <h5 style="color:white; font-weight:700; margin-bottom:20px;">📅 Événements</h5>
+        <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse;">
+                <thead>
+                    <tr style="border-bottom:1px solid rgba(212,175,55,0.2);">
+                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.85rem;">Titre</th>
+                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.85rem;">Date</th>
+                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.85rem;">Créateur</th>
+                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.85rem;">Tickets</th>
+                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.85rem;">Status</th>
+                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.85rem;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                        <td style="color:white; padding:12px; font-size:0.9rem;">{{ event.title }}</td>
+                        <td style="color:rgba(255,255,255,0.6); padding:12px; font-size:0.85rem;">{{ event.event_date.strftime('%d/%m/%Y') }}</td>
+                        <td style="color:rgba(255,255,255,0.6); padding:12px; font-size:0.85rem;">{{ event.creator_name }}</td>
+                        <td style="color:#d4af37; padding:12px; font-size:0.85rem;">{{ event.tickets_sold }}</td>
+                        <td style="padding:12px;">
+                            <span style="background:{% if event.status == 'active' %}rgba(46,213,115,0.15){% else %}rgba(255,107,107,0.15){% endif %}; color:{% if event.status == 'active' %}#2ed573{% else %}#ff6b6b{% endif %}; padding:3px 10px; border-radius:20px; font-size:0.8rem; font-weight:600;">
+                                {{ event.status }}
+                            </span>
+                        </td>
+                        <td style="padding:12px;">
+                            <div style="display:flex; gap:8px;">
+                                <a href="{{ url_for('events.event_detail', event_id=event.id) }}"
+                                   style="background:rgba(212,175,55,0.15); color:#d4af37; border:1px solid rgba(212,175,55,0.3); padding:5px 12px; border-radius:8px; text-decoration:none; font-size:0.8rem;">
+                                    Voir
+                                </a>
+                                {% if event.status == 'active' %}
+                                <form method="POST" action="{{ url_for('admin.cancel_event', event_id=event.id) }}"
+                                      onsubmit="return confirm('Annuler cet événement?')">
+                                    <button type="submit"
+                                            style="background:rgba(220,53,69,0.15); color:#ff6b7a; border:1px solid rgba(220,53,69,0.3); padding:5px 12px; border-radius:8px; font-size:0.8rem; cursor:pointer;">
+                                        Annuler
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:20px; padding:30px;">
+        <h5 style="color:white; font-weight:700; margin-bottom:20px;">👥 Utilisateurs</h5>
+        <div

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Notifications - École Events{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="mb-5">
+        <h2 style="color:white; font-weight:700;">🔔 Notifications</h2>
+        <p style="color:rgba(255,255,255,0.45);">Vos dernières notifications</p>
+    </div>
+
+    {% if notifications %}
+    <div style="display:flex; flex-direction:column; gap:15px;">
+        {% for notif in notifications %}
+        <div style="
+            background:#161616;
+            border:1px solid {% if not notif.is_read %}rgba(212,175,55,0.4){% else %}rgba(255,255,255,0.08){% endif %};
+            border-radius:16px;
+            padding:20px 25px;
+            display:flex;
+            align-items:center;
+            gap:20px;
+        ">
+            <div style="
+                width:45px; height:45px;
+                background:{% if not notif.is_read %}linear-gradient(135deg,#d4af37,#9a7b10){% else %}rgba(255,255,255,0.05){% endif %};
+                border-radius:50%;
+                display:flex; align-items:center; justify-content:center;
+                flex-shrink:0;
+                font-size:1.2rem;
+            ">🔔</div>
+
+            <div style="flex:1;">
+                <p style="color:{% if not notif.is_read %}white{% else %}rgba(255,255,255,0.6){% endif %}; margin:0; font-weight:{% if not notif.is_read %}600{% else %}400{% endif %};">
+                    {{ notif.message }}
+                </p>
+                {% if notif.event_title %}
+                <span style="color:#d4af37; font-size:0.8rem; margin-top:5px; display:block;">
+                    📅 {{ notif.event_title }}
+                </span>
+                {% endif %}
+                <span style="color:rgba(255,255,255,0.3); font-size:0.75rem; margin-top:3px; display:block;">
+                    {{ notif.created_at.strftime('%d/%m/%Y à %H:%M') }}
+                </span>
+            </div>
+
+            {% if not notif.is_read %}
+            <div style="width:10px; height:10px; background:#d4af37; border-radius:50%; flex-shrink:0;"></div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div style="text-align:center; padding:80px 0;">
+        <span style="font-size:5rem;">🔔</span>
+        <h4 style="color:white; margin-top:20px;">Aucune notification</h4>
+        <p style="color:rgba(255,255,255,0.45);">Vous serez notifié des changements importants</p>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

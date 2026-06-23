@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Connexion - École Events{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="text-center mb-4">
+            <svg style="width:130px; height:130px;" viewBox="0 0 680 380">
+                <defs>
+                    <linearGradient id="gl" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#f5e07a"/>
+                        <stop offset="50%" style="stop-color:#d4af37"/>
+                        <stop offset="100%" style="stop-color:#9a7400"/>
+                    </linearGradient>
+                </defs>
+                <circle cx="340" cy="175" r="120" fill="#111111" stroke="url(#gl)" stroke-width="2.5"/>
+                <circle cx="340" cy="175" r="108" fill="none" stroke="url(#gl)" stroke-width="0.7" opacity="0.35"/>
+                <circle cx="340" cy="72" r="2.5" fill="url(#gl)" opacity="0.5"/>
+                <circle cx="340" cy="278" r="2.5" fill="url(#gl)" opacity="0.5"/>
+                <circle cx="237" cy="175" r="2.5" fill="url(#gl)" opacity="0.5"/>
+                <circle cx="443" cy="175" r="2.5" fill="url(#gl)" opacity="0.5"/>
+                <text x="340" y="213" font-family="Georgia, serif" font-size="88" font-weight="700" fill="url(#gl)" text-anchor="middle" letter-spacing="-2">GE</text>
+                <line x1="275" y1="228" x2="405" y2="228" stroke="url(#gl)" stroke-width="0.7" opacity="0.35"/>
+                <polygon points="340,224 343,228 340,232 337,228" fill="url(#gl)" opacity="0.6"/>
+            </svg>
+            <h3 class="mt-3">Connexion</h3>
+            <p class="subtitle mt-1">Accédez à votre espace</p>
+        </div>
+
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-control form-control-lg"
+                       placeholder="votre@email.com" required>
+            </div>
+            <div class="mb-4">
+                <label class="form-label">Mot de passe</label>
+                <input type="password" name="password" class="form-control form-control-lg"
+                       placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn-gold">
+                Se connecter
+            </button>
+        </form>
+
+        <hr class="gold-divider">
+
+        <div class="text-center">
+            <p style="color:rgba(255,255,255,0.45); font-size:0.9rem;">
+                Pas encore de compte?
+                <a href="{{ url_for('auth.register') }}" class="gold-link"> S'inscrire</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

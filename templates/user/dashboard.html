@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% block title %}Tableau de bord - École Events{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="mb-4">
+        <h2 style="color:white; font-weight:700;">📊 Tableau de bord</h2>
+        <p style="color:rgba(255,255,255,0.45);">Bienvenue {{ session.user_name }}!</p>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3 col-6">
+            <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:16px; padding:25px; text-align:center;">
+                <div style="font-size:2rem; margin-bottom:8px;">🎫</div>
+                <div style="font-size:1.8rem; font-weight:700; color:#d4af37;">{{ tickets_count }}</div>
+                <div style="color:rgba(255,255,255,0.5); font-size:0.85rem;">Mes tickets</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:16px; padding:25px; text-align:center;">
+                <div style="font-size:2rem; margin-bottom:8px;">📅</div>
+                <div style="font-size:1.8rem; font-weight:700; color:#d4af37;">{{ events_count }}</div>
+                <div style="color:rgba(255,255,255,0.5); font-size:0.85rem;">Mes événements</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:16px; padding:25px; text-align:center;">
+                <div style="font-size:2rem; margin-bottom:8px;">⭐</div>
+                <div style="font-size:1.8rem; font-weight:700; color:#d4af37;">{{ reviews_count }}</div>
+                <div style="color:rgba(255,255,255,0.5); font-size:0.85rem;">Mes évaluations</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:16px; padding:25px; text-align:center;">
+                <div style="font-size:2rem; margin-bottom:8px;">💰</div>
+                <div style="font-size:1.8rem; font-weight:700; color:#d4af37;">{{ total_spent }} MAD</div>
+                <div style="color:rgba(255,255,255,0.5); font-size:0.85rem;">Total dépensé</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <a href="{{ url_for('events.create_event') }}" style="text-decoration:none;">
+                <div style="background:#161616; border:1px solid rgba(212,175,55,0.15); border-radius:16px; padding:25px; text-align:center; transition:all 0.3s;"
+                     onmouseover="this.style.borderColor='rgba(212,175,55,0.4)'"
+                     onmouseout="this.style.borderColor='rgba(212,175,55,0.15)'">
+                    <div style="font-size:2.5rem; margin-bottom:10px;">➕</div>
+                    <h6 style="color:white; font-weight:600;">Créer un événement</h6>
+                    <p style="color:rgba(255,255,255,0.3); font-size:0.8rem; margin:0;">Organisez votre prochain événement</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('events.list_events') }}" style="text-decoration:none;">
+                <div style="background:#161616; border:1px solid rgba(212,175,55,0.15); border-radius:16px; padding:25px; text-align:center; transition:all 0.3s;"
+                     onmouseover="this.style.borderColor='rgba(212,175,55,0.4)'"
+                     onmouseout="this.style.borderColor='rgba(212,175,55,0.15)'">
+                    <div style="font-size:2.5rem; margin-bottom:10px;">🔍</div>
+                    <h6 style="color:white; font-weight:600;">Explorer</h6>
+                    <p style="color:rgba(255,255,255,0.3); font-size:0.8rem; margin:0;">Découvrez les événements disponibles</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('profile.my_profile') }}" style="text-decoration:none;">
+                <div style="background:#161616; border:1px solid rgba(212,175,55,0.15); border-radius:16px; padding:25px; text-align:center; transition:all 0.3s;"
+                     onmouseover="this.style.borderColor='rgba(212,175,55,0.4)'"
+                     onmouseout="this.style.borderColor='rgba(212,175,55,0.15)'">
+                    <div style="font-size:2.5rem; margin-bottom:10px;">👤</div>
+                    <h6 style="color:white; font-weight:600;">Mon profil</h6>
+                    <p style="color:rgba(255,255,255,0.3); font-size:0.8rem; margin:0;">Gérez vos informations personnelles</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Derniers tickets -->
+    <div style="background:#161616; border:1px solid rgba(212,175,55,0.15); border-radius:16px; padding:25px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h5 style="color:white; font-weight:700; margin:0;">🎫 Mes derniers tickets</h5>
+            <a href="{{ url_for('tickets.my_tickets') }}" style="color:#d4af37; text-decoration:none; font-size:0.9rem;">
+                Voir tout →
+            </a>
+        </div>
+        {% if recent_tickets %}
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            {% for ticket in recent_tickets %}
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:15px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <div style="color:white; font-weight:600;">{{ ticket.title }}</div>
+                    <div style="color:rgba(255,255,255,0.4); font-size:0.8rem;">
+                        📅 {{ ticket.event_date.strftime('%d/%m/%Y') }} • 🪑 Place #{{ ticket.seat_number }}
+                    </div>
+                </div>
+                <a href="{{ url_for('events.event_detail', event_id=ticket.event_id) }}" 
+                   style="color:#d4af37; text-decoration:none; font-size:0.85rem;">
+                    Voir →
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align:center; padding:30px;">
+            <span style="font-size:2rem;">🎫</span>
+            <p style="color:rgba(255,255,255,0.3); margin-top:10px;">Aucun ticket réservé</p>
+            <a href="{{ url_for('events.list_events') }}" style="color:#d4af37; text-decoration:none;">
+                Réserver maintenant →
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

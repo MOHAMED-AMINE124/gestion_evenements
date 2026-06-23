@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}École Events{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0a0a0a; min-height: 100vh; display: flex; flex-direction: column; color: white; }
+        .navbar { background: #111111 !important; border-bottom: 1px solid rgba(212,175,55,0.25); padding: 12px 0; box-shadow: 0 4px 30px rgba(0,0,0,0.5); }
+        .navbar-brand { color: #d4af37 !important; font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; display:flex; align-items:center; gap:10px; text-decoration:none; }
+        .nav-link { color: rgba(255,255,255,0.75) !important; font-weight: 500; padding: 8px 16px !important; border-radius: 8px; transition: all 0.3s; }
+        .nav-link:hover { color: #d4af37 !important; background: rgba(212,175,55,0.1); }
+        .auth-page { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; background: #0a0a0a; position: relative; }
+        .auth-page::before { content: ''; position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(212,175,55,0.07) 0%, transparent 70%); top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+        .auth-card { background: #161616; border: 1px solid rgba(212,175,55,0.2); border-radius: 24px; padding: 50px 45px; width: 100%; max-width: 470px; box-shadow: 0 30px 80px rgba(0,0,0,0.6); position: relative; z-index: 1; }
+        .auth-card h3 { color: white; font-weight: 700; font-size: 1.7rem; }
+        .auth-card .subtitle { color: rgba(255,255,255,0.45); font-size: 0.95rem; }
+        .form-label { color: rgba(255,255,255,0.75); font-weight: 500; font-size: 0.9rem; margin-bottom: 8px; }
+        .form-control, .form-select { background: #1f1f1f !important; border: 1.5px solid rgba(212,175,55,0.2) !important; border-radius: 12px !important; color: white !important; padding: 13px 18px !important; font-size: 0.95rem !important; transition: all 0.3s !important; }
+        .form-control::placeholder { color: rgba(255,255,255,0.25) !important; }
+        .form-control:focus, .form-select:focus { border-color: #d4af37 !important; box-shadow: 0 0 0 3px rgba(212,175,55,0.12) !important; background: #242424 !important; }
+        .form-select option { background: #1f1f1f; color: white; }
+        .btn-gold { background: linear-gradient(135deg, #d4af37, #9a7b10); color: #0a0a0a; font-weight: 700; padding: 14px; border-radius: 12px; border: none; width: 100%; font-size: 1rem; letter-spacing: 0.5px; transition: all 0.3s; box-shadow: 0 4px 20px rgba(212,175,55,0.3); cursor: pointer; display:block; text-align:center; text-decoration:none; }
+        .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(212,175,55,0.5); background: linear-gradient(135deg, #e5c84a, #d4af37); color: #0a0a0a; }
+        .gold-divider { border: none; height: 1px; background: rgba(212,175,55,0.2); margin: 28px 0; }
+        .gold-link { color: #d4af37 !important; font-weight: 600; text-decoration: none; }
+        .gold-link:hover { color: #e5c84a !important; }
+        .alert-success { background: rgba(212,175,55,0.12) !important; border: 1px solid rgba(212,175,55,0.3) !important; color: #d4af37 !important; border-radius: 12px !important; }
+        .alert-danger { background: rgba(220,53,69,0.12) !important; border: 1px solid rgba(220,53,69,0.3) !important; color: #ff6b7a !important; border-radius: 12px !important; }
+        .hero-section { background: #0a0a0a; padding: 90px 0 110px; text-align: center; border-bottom: 1px solid rgba(212,175,55,0.15); position: relative; overflow: hidden; }
+        .hero-section::before { content: ''; position: absolute; width: 800px; height: 800px; background: radial-gradient(circle, rgba(212,175,55,0.06) 0%, transparent 65%); top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .hero-section h1 { font-size: 3rem; font-weight: 700; background: linear-gradient(135deg, #ffffff 0%, #d4af37 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; position: relative; }
+        .hero-section p { color: rgba(255,255,255,0.5); font-size: 1.15rem; position: relative; }
+        .dark-card { background: #161616; border: 1px solid rgba(212,175,55,0.15); border-radius: 20px; padding: 35px 25px; text-align: center; transition: all 0.3s; height: 100%; }
+        .dark-card:hover { border-color: rgba(212,175,55,0.4); transform: translateY(-6px); box-shadow: 0 20px 50px rgba(212,175,55,0.1); }
+        .dark-card h5 { color: white; font-weight: 600; margin: 15px 0 10px; }
+        .dark-card p { color: rgba(255,255,255,0.45); font-size: 0.9rem; }
+        .footer { background: #0d0d0d; border-top: 1px solid rgba(212,175,55,0.15); color: rgba(255,255,255,0.35); padding: 22px 0; text-align: center; font-size: 0.9rem; margin-top: auto; }
+        .page-title { font-size: 2.2rem; font-weight: 700; background: linear-gradient(135deg, #ffffff, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 30px; }
+        hr { border-color: rgba(212,175,55,0.2) !important; }
+        .logo-svg { width:75px; height:75px; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <svg class="logo-svg" viewBox="0 0 680 380">
+                <defs>
+                    <linearGradient id="gn" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#f5e07a"/>
+                        <stop offset="50%" style="stop-color:#d4af37"/>
+                        <stop offset="100%" style="stop-color:#9a7400"/>
+                    </linearGradient>
+                </defs>
+                <circle cx="340" cy="175" r="120" fill="#111111" stroke="url(#gn)" stroke-width="2.5"/>
+                <circle cx="340" cy="175" r="108" fill="none" stroke="url(#gn)" stroke-width="0.7" opacity="0.35"/>
+                <circle cx="340" cy="72" r="2.5" fill="url(#gn)" opacity="0.5"/>
+                <circle cx="340" cy="278" r="2.5" fill="url(#gn)" opacity="0.5"/>
+                <circle cx="237" cy="175" r="2.5" fill="url(#gn)" opacity="0.5"/>
+                <circle cx="443" cy="175" r="2.5" fill="url(#gn)" opacity="0.5"/>
+                <text x="340" y="213" font-family="Georgia, serif" font-size="88" font-weight="700" fill="url(#gn)" text-anchor="middle" letter-spacing="-2">GE</text>
+                <line x1="275" y1="228" x2="405" y2="228" stroke="url(#gn)" stroke-width="0.7" opacity="0.35"/>
+                <polygon points="340,224 343,228 340,232 337,228" fill="url(#gn)" opacity="0.6"/>
+            </svg>
+            École Events
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span style="color:#d4af37; font-size:1.3rem;">&#9776;</span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto gap-1">
+                {% if session.user_id %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('profile.dashboard') }}">📊 Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('about') }}">ℹ️ À propos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('contact') }}">📞 Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('profile.my_profile') }}">👤 {{ session.user_name }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.logout') }}">🚪 Déconnexion</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.login') }}">🔑 Connexion</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.register') }}">📝 Inscription</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('about') }}">ℹ️ À propos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('contact') }}">📞 Contact</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="container mt-3">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endwith %}
+
+{% block content %}{% endblock %}
+
+<footer class="footer">
+    <div class="container">
+        <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin-bottom:10px;">
+            <a href="{{ url_for('about') }}" style="color:rgba(255,255,255,0.3); text-decoration:none; font-size:0.8rem;">ℹ️ À propos</a>
+            <a href="{{ url_for('contact') }}" style="color:rgba(255,255,255,0.3); text-decoration:none; font-size:0.8rem;">📞 Contact</a>
+            <a href="#" style="color:rgba(255,255,255,0.3); text-decoration:none; font-size:0.8rem;">🔒 Confidentialité</a>
+        </div>
+        © École Events — Tous droits réservés
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
