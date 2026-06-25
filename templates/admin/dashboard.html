@@ -9,6 +9,27 @@
         <p style="color:rgba(255,255,255,0.45);">Gérez votre plateforme</p>
     </div>
 
+    <!-- أزرار الإدارة السريعة -->
+    <div style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom:30px;">
+        <a href="{{ url_for('permissions.manage_users') }}" 
+           style="background:rgba(212,175,55,0.15); color:#d4af37; border:1px solid rgba(212,175,55,0.3); padding:12px 25px; border-radius:12px; text-decoration:none; font-weight:600;">
+            👥 Utilisateurs
+        </a>
+        <a href="{{ url_for('permissions.list_roles') }}" 
+           style="background:rgba(212,175,55,0.15); color:#d4af37; border:1px solid rgba(212,175,55,0.3); padding:12px 25px; border-radius:12px; text-decoration:none; font-weight:600;">
+            🔑 Rôles
+        </a>
+        <a href="{{ url_for('events.list_events') }}" 
+           style="background:rgba(212,175,55,0.15); color:#d4af37; border:1px solid rgba(212,175,55,0.3); padding:12px 25px; border-radius:12px; text-decoration:none; font-weight:600;">
+            📅 Événements
+        </a>
+        <a href="{{ url_for('events.create_event') }}" 
+           style="background:linear-gradient(135deg,#d4af37,#9a7b10); color:#0a0a0a; border:1px solid rgba(212,175,55,0.3); padding:12px 25px; border-radius:12px; text-decoration:none; font-weight:700;">
+            ✨ Créer un événement
+        </a>
+    </div>
+
+    <!-- Statistiques -->
     <div class="row g-4 mb-5">
         <div class="col-md-3">
             <div style="background:linear-gradient(135deg,#d4af37,#9a7b10); border-radius:20px; padding:25px; text-align:center;">
@@ -36,48 +57,76 @@
         </div>
     </div>
 
-    <!-- Events Table -->
+    <!-- Gestion des événements -->
     <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:20px; padding:30px; margin-bottom:30px;">
-        <h5 style="color:white; font-weight:700; margin-bottom:20px;">📅 Événements</h5>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h5 style="color:white; font-weight:700; margin:0;">📅 Gestion des événements</h5>
+            <a href="{{ url_for('events.create_event') }}" 
+               style="background:linear-gradient(135deg,#d4af37,#9a7b10); color:#0a0a0a; padding:8px 20px; border-radius:10px; text-decoration:none; font-weight:700; font-size:0.85rem;">
+                ✨ Créer
+            </a>
+        </div>
         <div style="overflow-x:auto;">
             <table style="width:100%; border-collapse:collapse;">
                 <thead>
                     <tr style="border-bottom:1px solid rgba(212,175,55,0.2);">
-                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.85rem;">Titre</th>
-                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.85rem;">Date</th>
-                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.85rem;">Créateur</th>
-                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.85rem;">Tickets</th>
-                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.85rem;">Status</th>
-                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.85rem;">Action</th>
+                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.8rem;">Titre</th>
+                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.8rem;">Date</th>
+                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.8rem;">Créateur</th>
+                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.8rem;">Tickets</th>
+                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.8rem;">Status</th>
+                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.8rem;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for event in events %}
                     <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
                         <td style="color:white; padding:12px; font-size:0.9rem;">{{ event.title }}</td>
-                        <td style="color:rgba(255,255,255,0.6); padding:12px; font-size:0.85rem;">{{ event.event_date.strftime('%d/%m/%Y') }}</td>
+                        <td style="color:rgba(255,255,255,0.6); padding:12px; font-size:0.85rem;">{{ event.event_date.strftime('%d/%m/%Y %H:%M') }}</td>
                         <td style="color:rgba(255,255,255,0.6); padding:12px; font-size:0.85rem;">{{ event.creator_name }}</td>
                         <td style="color:#d4af37; padding:12px; font-size:0.85rem;">{{ event.tickets_sold }}</td>
                         <td style="padding:12px;">
-                            <span style="background:{% if event.status == 'active' %}rgba(46,213,115,0.15){% else %}rgba(255,107,107,0.15){% endif %}; color:{% if event.status == 'active' %}#2ed573{% else %}#ff6b6b{% endif %}; padding:3px 10px; border-radius:20px; font-size:0.8rem; font-weight:600;">
+                            <span style="background:{% if event.status == 'active' %}rgba(46,213,115,0.15){% elif event.status == 'cancelled' %}rgba(255,107,107,0.15){% else %}rgba(255,255,255,0.05){% endif %}; color:{% if event.status == 'active' %}#2ed573{% elif event.status == 'cancelled' %}#ff6b6b{% else %}rgba(255,255,255,0.4){% endif %}; padding:3px 10px; border-radius:20px; font-size:0.75rem; font-weight:600;">
                                 {{ event.status }}
                             </span>
                         </td>
                         <td style="padding:12px;">
-                            <div style="display:flex; gap:8px;">
+                            <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                                <!-- Voir -->
                                 <a href="{{ url_for('events.event_detail', event_id=event.id) }}"
-                                   style="background:rgba(212,175,55,0.15); color:#d4af37; border:1px solid rgba(212,175,55,0.3); padding:5px 12px; border-radius:8px; text-decoration:none; font-size:0.8rem;">
-                                    Voir
+                                   style="background:rgba(212,175,55,0.15); color:#d4af37; border:1px solid rgba(212,175,55,0.3); padding:4px 10px; border-radius:6px; text-decoration:none; font-size:0.75rem;">
+                                    👁️
                                 </a>
+                                <!-- Modifier -->
+                                <a href="{{ url_for('events.edit_event', event_id=event.id) }}"
+                                   style="background:rgba(46,213,115,0.15); color:#2ed573; border:1px solid rgba(46,213,115,0.3); padding:4px 10px; border-radius:6px; text-decoration:none; font-size:0.75rem;">
+                                    ✏️
+                                </a>
+                                <!-- Annuler / Approuver -->
                                 {% if event.status == 'active' %}
                                 <form method="POST" action="{{ url_for('admin.cancel_event', event_id=event.id) }}"
-                                      onsubmit="return confirm('Annuler cet événement?')">
+                                      onsubmit="return confirm('Annuler cet événement ?')" style="display:inline;">
                                     <button type="submit"
-                                            style="background:rgba(220,53,69,0.15); color:#ff6b7a; border:1px solid rgba(220,53,69,0.3); padding:5px 12px; border-radius:8px; font-size:0.8rem; cursor:pointer;">
-                                        Annuler
+                                            style="background:rgba(220,53,69,0.15); color:#ff6b6b; border:1px solid rgba(220,53,69,0.3); padding:4px 10px; border-radius:6px; font-size:0.75rem; cursor:pointer;">
+                                        ❌
+                                    </button>
+                                </form>
+                                {% elif event.status == 'cancelled' %}
+                                <form method="POST" action="{{ url_for('admin.approve_event', event_id=event.id) }}"
+                                      onsubmit="return confirm('Approuver cet événement ?')" style="display:inline;">
+                                    <button type="submit"
+                                            style="background:rgba(46,213,115,0.15); color:#2ed573; border:1px solid rgba(46,213,115,0.3); padding:4px 10px; border-radius:6px; font-size:0.75rem; cursor:pointer;">
+                                        ✅
                                     </button>
                                 </form>
                                 {% endif %}
+                                <!-- Supprimer (بدون Popup) -->
+                                <form method="POST" action="{{ url_for('events.delete_event', event_id=event.id) }}" style="display:inline;">
+                                    <button type="submit"
+                                            style="background:rgba(220,53,69,0.25); color:#ff6b6b; border:1px solid rgba(220,53,69,0.4); padding:4px 10px; border-radius:6px; font-size:0.75rem; cursor:pointer; font-weight:700;">
+                                        🗑️
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
@@ -88,6 +137,45 @@
     </div>
 
     <!-- Users Table -->
-    <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:20px; padding:30px;">
-        <h5 style="color:white; font-weight:700; margin-bottom:20px;">👥 Utilisateurs</h5>
-        <div
+    <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:20px; padding:30px; margin-bottom:30px;">
+        <h5 style="color:white; font-weight:700; margin-bottom:20px;">👥 Utilisateurs récents</h5>
+        <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse;">
+                <thead>
+                    <tr style="border-bottom:1px solid rgba(212,175,55,0.2);">
+                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.8rem;">Nom</th>
+                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.8rem;">Email</th>
+                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.8rem;">Rôle</th>
+                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.8rem;">Tickets</th>
+                        <th style="color:#d4af37; padding:12px; text-align:left; font-size:0.8rem;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                        <td style="color:white; padding:12px; font-size:0.9rem;">{{ user.full_name }}</td>
+                        <td style="color:rgba(255,255,255,0.6); padding:12px; font-size:0.85rem;">{{ user.email }}</td>
+                        <td style="padding:12px;">
+                            <span style="background:rgba(212,175,55,0.1); color:#d4af37; padding:3px 12px; border-radius:15px; font-size:0.75rem; border:1px solid rgba(212,175,55,0.2);">
+                                {{ user.role_name or 'user' }}
+                            </span>
+                            {% if user.is_super_admin %}
+                            <span style="background:linear-gradient(135deg,#d4af37,#9a7b10); color:#0a0a0a; padding:2px 8px; border-radius:10px; font-size:0.6rem; font-weight:700;">👑</span>
+                            {% endif %}
+                        </td>
+                        <td style="color:rgba(255,255,255,0.6); padding:12px; font-size:0.85rem;">{{ user.tickets_count or 0 }}</td>
+                        <td style="padding:12px;">
+                            <a href="{{ url_for('permissions.manage_users') }}" 
+                               style="background:rgba(212,175,55,0.15); color:#d4af37; border:1px solid rgba(212,175,55,0.3); padding:4px 12px; border-radius:6px; text-decoration:none; font-size:0.75rem;">
+                                Gérer
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

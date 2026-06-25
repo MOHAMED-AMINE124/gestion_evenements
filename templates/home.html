@@ -28,7 +28,10 @@
     </div>
 </div>
 
-<!-- Statistiques -->
+<!-- ============================================ -->
+<!-- 🔴 الإحصائيات: تظهر فقط للإداريين -->
+<!-- ============================================ -->
+{% if session.is_super_admin or session.user_role in ['admin', 'manager'] or 'users.manage_roles' in session.permissions %}
 <div class="container" style="margin-top:-40px; position:relative; z-index:2;">
     <div class="row g-4">
         <div class="col-md-3 col-6">
@@ -61,13 +64,16 @@
         </div>
     </div>
 </div>
+{% endif %}
 
-<!-- Quick Access Cards -->
+<!-- ============================================ -->
+<!-- 🔴 Navigation rapide (مبسطة) -->
+<!-- ============================================ -->
 <div class="container py-5">
     <h4 style="color:white; font-weight:700; margin-bottom:30px; text-align:center; font-size:1.8rem;">
         Navigation rapide
     </h4>
-    <div class="row g-4">
+    <div class="row g-4 justify-content-center">
         
         <!-- Card 1: Événements -->
         <div class="col-lg-3 col-md-6">
@@ -153,6 +159,91 @@
                 </div>
             </a>
         </div>
+
+        <!-- ============================================ -->
+        <!-- 🔴 الكروت الإدارية: تظهر فقط للإداريين -->
+        <!-- ============================================ -->
+
+        <!-- Card 5: Gérer les utilisateurs (Admin uniquement) -->
+        {% if session.is_super_admin or 'users.manage_roles' in session.permissions %}
+        <div class="col-lg-3 col-md-6">
+            <a href="{{ url_for('permissions.manage_users') }}" style="text-decoration:none; display:block;">
+                <div class="dark-card" style="padding:35px 20px; text-align:center; height:100%; border-color:rgba(212,175,55,0.3);">
+                    <div style="font-size:3.5rem; margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:10px;">
+                        <span style="background:linear-gradient(135deg,#d4af37,#9a7b10); width:70px; height:70px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; color:#0a0a0a;">
+                            👥
+                        </span>
+                    </div>
+                    <h5 style="color:white; font-weight:600; margin-bottom:10px;">Gérer les utilisateurs</h5>
+                    <p style="color:rgba(255,255,255,0.45); font-size:0.9rem; margin:0;">
+                        Gérez les rôles et permissions des utilisateurs
+                    </p>
+                    <div style="margin-top:15px; color:#d4af37; font-size:0.85rem; font-weight:500;">
+                        Gérer →
+                    </div>
+                    <div style="margin-top:10px;">
+                        <span style="background:rgba(212,175,55,0.15); color:#d4af37; padding:2px 10px; border-radius:12px; font-size:0.6rem; font-weight:600; border:1px solid rgba(212,175,55,0.2);">
+                            🔒 ADMIN
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Card 6: Gérer les rôles (Super Admin uniquement) -->
+        {% if session.is_super_admin %}
+        <div class="col-lg-3 col-md-6">
+            <a href="{{ url_for('permissions.list_roles') }}" style="text-decoration:none; display:block;">
+                <div class="dark-card" style="padding:35px 20px; text-align:center; height:100%; border-color:rgba(212,175,55,0.3);">
+                    <div style="font-size:3.5rem; margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:10px;">
+                        <span style="background:linear-gradient(135deg,#d4af37,#9a7b10); width:70px; height:70px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; color:#0a0a0a;">
+                            🔑
+                        </span>
+                    </div>
+                    <h5 style="color:white; font-weight:600; margin-bottom:10px;">Gérer les rôles</h5>
+                    <p style="color:rgba(255,255,255,0.45); font-size:0.9rem; margin:0;">
+                        Consultez et gérez les rôles et leurs permissions
+                    </p>
+                    <div style="margin-top:15px; color:#d4af37; font-size:0.85rem; font-weight:500;">
+                        Voir →
+                    </div>
+                    <div style="margin-top:10px;">
+                        <span style="background:rgba(212,175,55,0.15); color:#d4af37; padding:2px 10px; border-radius:12px; font-size:0.6rem; font-weight:600; border:1px solid rgba(212,175,55,0.2);">
+                            👑 SUPER ADMIN
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Card 7: Dashboard Admin (Admin, Manager, Super Admin) -->
+        {% if session.is_super_admin or session.user_role in ['admin', 'manager'] %}
+        <div class="col-lg-3 col-md-6">
+            <a href="{{ url_for('admin.dashboard') }}" style="text-decoration:none; display:block;">
+                <div class="dark-card" style="padding:35px 20px; text-align:center; height:100%; border-color:rgba(212,175,55,0.3);">
+                    <div style="font-size:3.5rem; margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:10px;">
+                        <span style="background:linear-gradient(135deg,#d4af37,#9a7b10); width:70px; height:70px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; color:#0a0a0a;">
+                            📊
+                        </span>
+                    </div>
+                    <h5 style="color:white; font-weight:600; margin-bottom:10px;">Dashboard Admin</h5>
+                    <p style="color:rgba(255,255,255,0.45); font-size:0.9rem; margin:0;">
+                        Accédez au tableau de bord d'administration
+                    </p>
+                    <div style="margin-top:15px; color:#d4af37; font-size:0.85rem; font-weight:500;">
+                        Accéder →
+                    </div>
+                    <div style="margin-top:10px;">
+                        <span style="background:rgba(212,175,55,0.15); color:#d4af37; padding:2px 10px; border-radius:12px; font-size:0.6rem; font-weight:600; border:1px solid rgba(212,175,55,0.2);">
+                            🔒 ADMIN
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endif %}
 
     </div>
 </div>
@@ -243,7 +334,7 @@
 </div>
 
 <!-- ============================================ -->
-<!-- 🔴 Flux d'activité (Nouveau) -->
+<!-- 🔴 Flux d'activité (تظهر للكل) -->
 <!-- ============================================ -->
 <div class="container py-4">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">

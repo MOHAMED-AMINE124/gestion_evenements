@@ -184,7 +184,7 @@ def edit_event(event_id):
         flash('Événement non trouvé!', 'danger')
         return redirect(url_for('events.list_events'))
     
-    if session['user_id'] != event['created_by'] and session.get('user_role') != 'admin':
+    if session['user_id'] != event['created_by'] and session.get('user_role') != 'admin' and not session.get('is_super_admin'):
         flash('Vous n\'êtes pas autorisé à modifier cet événement!', 'danger')
         return redirect(url_for('events.event_detail', event_id=event_id))
     
@@ -247,14 +247,20 @@ def delete_event(event_id):
     from app import mysql
     cur = mysql.connection.cursor()
     
-    cur.execute("SELECT created_by FROM events WHERE id = %s", (event_id,))
+    # نجيب الفعالية مع اسم المنشئ
+    cur.execute("SELECT e.*, u.full_name as creator_name FROM events e JOIN users u ON e.created_by = u.id WHERE e.id = %s", (event_id,))
     event = cur.fetchone()
     
     if not event:
         flash('Événement non trouvé!', 'danger')
         return redirect(url_for('events.list_events'))
     
-    if session['user_id'] != event['created_by'] and session.get('user_role') != 'admin':
+    # نتحقق: إما Super Admin أو صاحب الفعالية أو Admin
+    user_id = session['user_id']
+    is_super_admin = session.get('is_super_admin', False)
+    user_role = session.get('user_role', 'user')
+    
+    if not is_super_admin and user_id != event['created_by'] and user_role != 'admin':
         flash('Vous n\'êtes pas autorisé à supprimer cet événement!', 'danger')
         return redirect(url_for('events.event_detail', event_id=event_id))
     
@@ -268,7 +274,7 @@ def delete_event(event_id):
         # حذف الإشعارات المرتبطة
         cur.execute("DELETE FROM notifications WHERE event_id = %s", (event_id,))
         
-        # حذف التقييمات المرتبطة (إذا كان الجدول موجود)
+        # حذف التقييمات المرتبطة
         try:
             cur.execute("DELETE FROM reviews WHERE event_id = %s", (event_id,))
         except:
@@ -278,10 +284,10 @@ def delete_event(event_id):
         cur.execute("DELETE FROM events WHERE id = %s", (event_id,))
         
         mysql.connection.commit()
-        flash('Événement supprimé avec succès!', 'success')
+        flash('✅ Événement supprimé avec succès!', 'success')
     except Exception as e:
         mysql.connection.rollback()
-        flash(f'Erreur lors de la suppression: {str(e)}', 'danger')
+        flash(f'❌ Erreur lors de la suppression: {str(e)}', 'danger')
     finally:
         cur.close()
     

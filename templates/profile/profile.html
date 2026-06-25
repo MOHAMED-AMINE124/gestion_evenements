@@ -40,6 +40,10 @@
                 "></div>
 
                 <!-- Avatar -->
+                {% if user.profile_pic %}
+                <img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}" 
+                     style="width:120px; height:120px; border-radius:50%; object-fit:cover; border:3px solid rgba(212,175,55,0.3); margin:0 auto 20px; display:block;">
+                {% else %}
                 <div style="
                     width: 120px;
                     height: 120px;
@@ -59,6 +63,7 @@
                 ">
                     {{ user.full_name[0].upper() }}
                 </div>
+                {% endif %}
 
                 <!-- Nom -->
                 <h4 style="color:white; font-weight:700; font-size:1.4rem; position:relative; z-index:1;">

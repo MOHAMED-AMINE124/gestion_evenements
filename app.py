@@ -1,13 +1,21 @@
 from flask import Flask, render_template, session, redirect, url_for, request, flash
-from flask_mysqldb import MySQL
 from flask_login import LoginManager, UserMixin
 from flask_mail import Mail
 from config import Config
 import os
+import sqlite3
 from datetime import datetime
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# ============================================
+# دالة الاتصال بقاعدة البيانات SQLite
+# ============================================
+def get_db():
+    conn = sqlite3.connect('school_events.db')
+    conn.row_factory = sqlite3.Row
+    return conn
 
 # ============================================
 # إنشاء مجلد uploads إذا لم يكن موجوداً
@@ -16,7 +24,6 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
     print(f"✅ Created upload folder: {app.config['UPLOAD_FOLDER']}")
 
-mysql = MySQL(app)
 mail = Mail(app)
 
 login_manager = LoginManager(app)
@@ -31,10 +38,11 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(user_id):
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM users WHERE id = ?", (user_id,))
     user = cur.fetchone()
-    cur.close()
+    conn.close()
     if user:
         return User(user['id'], user['full_name'], user['email'], user['role'])
     return None
@@ -44,14 +52,15 @@ def home():
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
 
-    cur = mysql.connection.cursor()
+    conn = get_db()
+    cur = conn.cursor()
     
     # عدد الفعاليات النشطة
     cur.execute("SELECT COUNT(*) as count FROM events WHERE status = 'active'")
     events_count = cur.fetchone()['count']
 
     # عدد التذاكر المحجوزة للمستخدم
-    cur.execute("SELECT COUNT(*) as count FROM tickets WHERE user_id = %s AND payment_status = 'paid'",
+    cur.execute("SELECT COUNT(*) as count FROM tickets WHERE user_id = ? AND payment_status = 'paid'",
                 (session['user_id'],))
     tickets_count = cur.fetchone()['count']
     
@@ -64,7 +73,7 @@ def home():
     revenue = cur.fetchone()['total'] or 0
 
     # عدد الإشعارات غير المقروءة
-    cur.execute("SELECT COUNT(*) as count FROM notifications WHERE user_id = %s AND is_read = 0",
+    cur.execute("SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND is_read = 0",
                 (session['user_id'],))
     notif_count = cur.fetchone()['count']
     session['notif_count'] = notif_count
@@ -98,7 +107,7 @@ def home():
         recent_activity.append({
             'icon': '🎫',
             'message': f"{ticket['full_name']} a réservé un ticket pour '{ticket['title']}'",
-            'time': ticket['booked_at'].strftime('%d/%m/%Y à %H:%M'),
+            'time': datetime.strptime(ticket['booked_at'], '%Y-%m-%d %H:%M:%S').strftime('%d/%m/%Y à %H:%M'),
             'link': url_for('tickets.my_tickets')
         })
     
@@ -115,7 +124,7 @@ def home():
         recent_activity.append({
             'icon': '📅',
             'message': f"{event['full_name']} a créé l'événement '{event['title']}'",
-            'time': event['created_at'].strftime('%d/%m/%Y à %H:%M'),
+            'time': datetime.strptime(event['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%d/%m/%Y à %H:%M'),
             'link': url_for('events.event_detail', event_id=event['id'])
         })
     
@@ -134,13 +143,13 @@ def home():
             recent_activity.append({
                 'icon': '⭐',
                 'message': f"{review['full_name']} a évalué '{review['title']}' avec {review['rating']} étoiles",
-                'time': review['created_at'].strftime('%d/%m/%Y à %H:%M'),
+                'time': datetime.strptime(review['created_at'], '%Y-%m-%d %H:%M:%S').strftime('%d/%m/%Y à %H:%M'),
                 'link': url_for('events.event_detail', event_id=review['event_id'])
             })
     except:
         pass
     
-    cur.close()
+    conn.close()
 
     # الوقت الحالي
     now = datetime.now()
@@ -182,7 +191,7 @@ def contact():
             # إرسال إيميل إلى الإدارة
             msg = Message(
                 subject=f'📩 Contact - {subject}',
-                recipients=['mohamedelhamraoui913@gmail.com'],  # 🔴 غيرها لإيميلك
+                recipients=['mohamedelhamraoui913@gmail.com'],
                 sender=app.config['MAIL_DEFAULT_SENDER']
             )
             msg.html = f"""
@@ -255,6 +264,7 @@ from routes.notifications import notifications
 from routes.admin import admin
 from routes.profile import profile
 from routes.reviews import reviews
+from routes.permissions import permissions_bp
 
 app.register_blueprint(auth)
 app.register_blueprint(events)
@@ -263,6 +273,10 @@ app.register_blueprint(notifications)
 app.register_blueprint(admin)
 app.register_blueprint(profile)
 app.register_blueprint(reviews)
+app.register_blueprint(permissions_bp)
 
+# ============================================
+# 🚀 تشغيل التطبيق
+# ============================================
 if __name__ == '__main__':
     app.run(debug=True)

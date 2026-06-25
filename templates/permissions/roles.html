@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Gérer les rôles - École Events{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-4">
+        <h2 style="color:white; font-weight:700;">🔑 Gérer les rôles</h2>
+        <p style="color:rgba(255,255,255,0.45);">Gérez les rôles et leurs permissions</p>
+    </div>
+
+    <div class="row g-4">
+        {% for role in roles %}
+        <div class="col-md-4">
+            <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:20px; padding:25px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h5 style="color:white; font-weight:700; margin:0;">{{ role.name }}</h5>
+                    <span style="background:rgba(212,175,55,0.1); color:#d4af37; padding:3px 12px; border-radius:15px; font-size:0.7rem;">
+                        {{ role.users_count or 0 }} utilisateurs
+                    </span>
+                </div>
+                <p style="color:rgba(255,255,255,0.4); font-size:0.85rem; min-height:40px;">
+                    {{ role.description or 'Aucune description' }}
+                </p>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:rgba(255,255,255,0.3); font-size:0.75rem;">
+                        🔒 {{ role.permissions_count or 0 }} permissions
+                    </span>
+                    <a href="{{ url_for('permissions.view_role', role_id=role.id) }}" 
+                       style="background:rgba(212,175,55,0.15); color:#d4af37; border:1px solid rgba(212,175,55,0.3); padding:8px 20px; border-radius:10px; text-decoration:none; font-size:0.85rem;">
+                        Voir →
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div style="margin-top:30px;">
+        <a href="{{ url_for('permissions.manage_users') }}" style="color:#d4af37; text-decoration:none;">
+            ← Retour à la gestion des utilisateurs
+        </a>
+    </div>
+</div>
+{% endblock %}

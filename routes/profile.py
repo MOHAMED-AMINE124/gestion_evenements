@@ -78,14 +78,25 @@ def edit_profile():
         flash('Cet email est déjà utilisé!', 'danger')
         return redirect(url_for('profile.my_profile'))
 
+    # ✅ معالجة الصورة
     profile_pic = None
     if 'profile_pic' in request.files:
         file = request.files['profile_pic']
         if file and file.filename != '':
-            filename = secure_filename(file.filename)
-            upload_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(upload_path)
-            profile_pic = filename
+            # التأكد من أن الملف صورة
+            allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+            if '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in allowed_extensions:
+                filename = secure_filename(file.filename)
+                # إضافة timestamp لتجنب تكرار الأسماء
+                import time
+                filename = str(int(time.time())) + '_' + filename
+                upload_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(upload_path)
+                profile_pic = filename
+                print(f"✅ Image sauvegardée: {upload_path}")  # للتحقق
+            else:
+                flash('Format d\'image non supporté! (PNG, JPG, JPEG, GIF, WEBP)', 'danger')
+                return redirect(url_for('profile.my_profile'))
 
     if profile_pic:
         cur.execute("""
@@ -144,7 +155,7 @@ def change_password():
 
 
 # ============================================
-# 🆕 ROUTE DASHBOARD (لوحة التحكم)
+# 🆕 ROUTE DASHBOARD
 # ============================================
 @profile.route('/dashboard')
 def dashboard():
@@ -154,21 +165,18 @@ def dashboard():
     from app import mysql
     cur = mysql.connection.cursor()
 
-    # عدد التذاكر
     cur.execute("""
         SELECT COUNT(*) as count FROM tickets 
         WHERE user_id = %s AND payment_status = 'paid'
     """, (session['user_id'],))
     tickets_count = cur.fetchone()['count']
 
-    # عدد الفعاليات المنشأة
     cur.execute("""
         SELECT COUNT(*) as count FROM events 
         WHERE created_by = %s AND status = 'active'
     """, (session['user_id'],))
     events_count = cur.fetchone()['count']
 
-    # عدد التقييمات
     try:
         cur.execute("""
             SELECT COUNT(*) as count FROM reviews 
@@ -178,14 +186,12 @@ def dashboard():
     except:
         reviews_count = 0
 
-    # إجمالي المبلغ المنفق
     cur.execute("""
         SELECT SUM(payment_amount) as total FROM tickets 
         WHERE user_id = %s AND payment_status = 'paid'
     """, (session['user_id'],))
     total_spent = cur.fetchone()['total'] or 0
 
-    # آخر 5 تذاكر
     cur.execute("""
         SELECT t.*, e.title, e.event_date
         FROM tickets t

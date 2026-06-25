@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Mes permissions - École Events{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-4">
+        <h2 style="color:white; font-weight:700;">🔑 Mes permissions</h2>
+        <p style="color:rgba(255,255,255,0.45);">Liste de toutes vos permissions</p>
+    </div>
+
+    <div style="background:#161616; border:1px solid rgba(212,175,55,0.2); border-radius:20px; padding:30px;">
+        {% if permissions %}
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+            {% for perm in permissions %}
+            <div style="display:flex; align-items:center; gap:8px; padding:10px 15px; background:rgba(255,255,255,0.02); border-radius:8px; border-left:3px solid #d4af37;">
+                <span style="color:#2ed573;">✅</span>
+                <span style="color:white; font-size:0.9rem;">{{ perm }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align:center; padding:40px;">
+            <span style="font-size:3rem;">🔒</span>
+            <p style="color:rgba(255,255,255,0.4); margin-top:15px;">Aucune permission trouvée</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div style="margin-top:20px;">
+        <a href="{{ url_for('home') }}" style="color:#d4af37; text-decoration:none;">
+            ← Retour à l'accueil
+        </a>
+    </div>
+</div>
+{% endblock %}
